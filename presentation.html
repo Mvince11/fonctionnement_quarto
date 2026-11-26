@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<script src="presentation_files/libs/clipboard/clipboard.min.js"></script>
+<script src="presentation_files/libs/quarto-html/tabby.min.js"></script>
+<script src="presentation_files/libs/quarto-html/popper.min.js"></script>
+<script src="presentation_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="presentation_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="presentation_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="presentation_files/libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.6.39">
+
+  <meta name="author" content="[Votre nom]">
+  <title>Un observatoire en ligne pour comprendre les inondations</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="presentation_files/libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="presentation_files/libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+  </style>
+  <link rel="stylesheet" href="presentation_files/libs/revealjs/dist/theme/quarto-423d414d36ce366a9d05f36d06304417.css">
+  <link href="presentation_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="presentation_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="presentation_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="presentation_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+  <script src="presentation_files/libs/quarto-diagram/mermaid.min.js"></script>
+  <script src="presentation_files/libs/quarto-diagram/mermaid-init.js"></script>
+  <link href="presentation_files/libs/quarto-diagram/mermaid.css" rel="stylesheet">
+  <style>
+  @import url('https://fonts.googleapis.com/css2?family=Lora:wght@600&display=swap');
+
+  .reveal { font-size: 34px; color: #1e293b; }
+  .reveal h1, .reveal h2, .reveal h3 { font-family: "Lora", Georgia, serif; color: #435481; text-transform: none; }
+  .reveal h2 { display: inline-block; border-bottom: 3px solid #009EE0; padding-bottom: .12em; margin-bottom: .7em; }
+  .reveal ul, .reveal ol { margin-left: 1em; }
+  .reveal li { margin-bottom: .45em; }
+
+  /* Diapositive de titre */
+  .reveal .title-slide h1,
+  .reveal .title-slide .subtitle,
+  .reveal .title-slide .author,
+  .reveal .title-slide .date { color: #fff !important; }
+  .reveal .title-slide h1 { font-size: 1.8em; }
+  .reveal .title-slide .subtitle { font-size: .75em; opacity: .93; }
+
+  /* Logo et pied de page */
+  .reveal .slide-logo { background: #fff; padding: 4px 8px; border-radius: 6px; max-height: 46px !important; }
+  .reveal .footer { font-size: .45em; color: #64748b; }
+
+  /* Cartes */
+  .cartes { display: flex; gap: 24px; justify-content: center; align-items: stretch; margin-top: .6em; }
+  .carte { flex: 1; text-align: left; font-size: .8em; line-height: 1.35; background: #f8fafc;
+           border-top: 6px solid #009EE0; border-radius: 10px; padding: 14px 20px 16px; }
+  .carte h3 { margin: 0 0 .35em; font-size: 1.15em; }
+  .carte.vert { border-top-color: #97BE0D; }
+  .carte.marine { border-top-color: #435481; }
+
+  /* Chiffres et pastilles */
+  .gros-chiffre { font-family: "Lora", Georgia, serif; font-size: 2.6em; color: #009EE0; line-height: 1.05; }
+  .legende { font-size: .6em; color: #64748b; }
+  .pastille { display: inline-block; padding: .2em .9em; margin: 0 .3em .3em 0; border-radius: 999px; color: #fff; font-weight: 600; font-size: .8em; }
+  .reveal table { font-size: .75em; border-collapse: collapse; margin: 0 auto; }
+  .reveal table th { background: #435481; color: #fff; padding: .4em .9em; }
+  .reveal table td { padding: .45em .9em; border-bottom: 1px solid #e2e8f0; text-align: left; }
+  .callout { font-size: .8em; }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" data-background-gradient="linear-gradient(135deg, #435481 0%, #009EE0 100%)" class="quarto-title-block center">
+  <h1 class="title">Un observatoire en ligne pour comprendre les inondations</h1>
+  <p class="subtitle">Comment nous avons construit le site de l’Observatoire de la vulnérabilité aux inondations Vienne - Clain</p>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+[Votre nom] 
+</div>
+</div>
+</div>
+
+  <p class="date">26 novembre 2026</p>
+</section>
+<section id="pourquoi-un-observatoire" class="slide level2">
+<h2>Pourquoi un observatoire ?</h2>
+<div class="columns">
+<div class="column" style="width:55%;">
+<ul>
+<li>L’inondation est le <strong>premier risque naturel</strong> en France</li>
+<li>Elle menace des vies, des logements, des emplois</li>
+<li>Les bassins de la Vienne et du Clain ont connu des crues par le passé</li>
+<li>Objectif : <strong>« mieux savoir pour mieux agir »</strong></li>
+</ul>
+</div><div class="column" style="width:45%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="Images/crue_poitiers.jpg" style="width:100.0%"></p>
+<figcaption>Crue à Poitiers</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="Images/crue_chatellerault.jpg" style="width:100.0%"></p>
+<figcaption>Crue à Châtellerault</figcaption>
+</figure>
+</div>
+</div></div>
+<aside class="notes">
+<p>Rappeler que le territoire a été relativement épargné ces dernières années, mais que les événements récents sur des territoires voisins incitent à rester vigilant.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="la-vulnérabilité-cest-quoi" class="slide level2">
+<h2>La vulnérabilité, c’est quoi ?</h2>
+<p>Ce qui peut être touché par une inondation, et à quel point.</p>
+<div class="cartes">
+<section id="les-personnes" class="carte">
+<h3>Les personnes</h3>
+<p>Habitants, personnes âgées, ménages modestes, établissements accueillant du public</p>
+</section>
+<section id="les-biens" class="carte vert">
+<h3>Les biens</h3>
+<p>Logements, bâtiments, routes, réseaux, patrimoine</p>
+</section>
+<section id="les-activités" class="carte marine">
+<h3>Les activités</h3>
+<p>Entreprises, emplois, agriculture, services utiles en cas de crise</p>
+</section>
+</div>
+</section>
+<section id="une-crue-centennale-cest-quoi" class="slide level2">
+<h2>Une « crue centennale », c’est quoi ?</h2>
+<div class="columns">
+<div class="column" style="width:40%;">
+<p><span class="gros-chiffre">1 sur 100</span></p>
+<p>chance de se produire <strong>chaque année</strong></p>
+</div><div class="column" style="width:60%;">
+<ul>
+<li>Ce n’est <strong>pas</strong> « une crue tous les cent ans »</li>
+<li>Elle peut survenir deux années de suite</li>
+<li>Sur 30 ans, la chance d’en connaître au moins une est d’<strong>environ 1 sur 4</strong></li>
+<li>Tous les indicateurs de l’observatoire s’appuient sur cette crue de référence</li>
+</ul>
+</div></div>
+<aside class="notes">
+<p>Calcul : 1 - (0,99 à la puissance 30), soit environ 26 %. C’est une comparaison utile pour un public qui pense que la crue centennale ne se produit qu’une fois par siècle.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="le-projet-en-une-phrase" class="slide level2">
+<h2>Le projet en une phrase</h2>
+<div class="callout callout-note callout-style-simple">
+<div class="callout-body">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-content">
+<p>Un site <strong>gratuit et ouvert à tous</strong> qui montre, sur une carte et en chiffres, qui et quoi est exposé aux inondations, commune par commune.</p>
+</div>
+</div>
+</div>
+<div>
+<ul>
+<li class="fragment">Réalisé par l’EPTB de la Vienne et le CEREMA</li>
+<li class="fragment">Avec l’appui de collectivités et de services de l’État</li>
+<li class="fragment">Financé dans le cadre d’un programme de prévention des inondations</li>
+</ul>
+</div>
+</section>
+<section id="ce-que-lon-peut-faire-sur-le-site" class="slide level2">
+<h2>Ce que l’on peut faire sur le site</h2>
+<div class="cartes">
+<section id="explorer-la-carte" class="carte">
+<h3>Explorer la carte</h3>
+<p>Se déplacer, zoomer, passer en vue 3D, changer de fond de plan</p>
+</section>
+<section id="chercher-un-lieu" class="carte vert">
+<h3>Chercher un lieu</h3>
+<p>Saisir une adresse ou une parcelle pour voir si elle est concernée</p>
+</section>
+<section id="lire-les-chiffres" class="carte marine">
+<h3>Lire les chiffres</h3>
+<p>Consulter un tableau et un graphique pour chaque indicateur</p>
+</section>
+</div>
+<!-- Capture d'écran possible : Images/capture_carte.png -->
+</section>
+<section id="les-indicateurs" class="slide level2">
+<h2>Les indicateurs</h2>
+<p>Des mesures simples, calculées selon <strong>une méthode nationale</strong>.</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><strong>Exemples</strong></p>
+<ul>
+<li>Nombre de personnes en zone fortement inondable</li>
+<li>Nombre de logements en zone inondable</li>
+<li>Communes disposant d’un plan communal de sauvegarde à jour</li>
+</ul>
+</div><div class="column" style="width:50%;">
+<p><strong>Six thèmes</strong></p>
+<ul>
+<li>Population</li>
+<li>Urbanisation</li>
+<li>Économie</li>
+<li>Infrastructures</li>
+<li>Agriculture</li>
+<li>Environnement</li>
+</ul>
+</div></div>
+</section>
+<section id="doù-viennent-les-données" class="slide level2">
+<h2>D’où viennent les données ?</h2>
+<div class="cell" data-reveal="true" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+  A["Données publiques&lt;br&gt;IGN, INSEE, CEREMA"] --&gt; B["Indicateurs calculés&lt;br&gt;selon une méthode nationale"]
+  B --&gt; C["Cartes, tableaux&lt;br&gt;et graphiques"]
+  C --&gt; D["Un site web&lt;br&gt;ouvert à tous"]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<div class="legende">
+<p>BD TOPO (IGN), Fichiers fonciers (CEREMA), GeoSIREN (INSEE)</p>
+</div>
+</section>
+<section id="comment-le-site-est-construit" class="slide level2">
+<h2>Comment le site est construit</h2>
+<p><strong>Quarto</strong> : un outil qui transforme des fichiers texte et des données en site web.</p>
+<div>
+<ul>
+<li class="fragment">On écrit les pages une fois, le site se <strong>reconstruit automatiquement</strong></li>
+<li class="fragment">Pas de serveur à entretenir : le site est publié gratuitement</li>
+<li class="fragment">Quand les données changent, on relance la fabrication et tout est à jour</li>
+</ul>
+</div>
+<aside class="notes">
+<p>Image possible : une recette de cuisine. On écrit la recette une fois, on peut la refaire à l’identique à chaque nouvelle livraison de données.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="les-quatre-grandes-étapes" class="slide level2">
+<h2>Les quatre grandes étapes</h2>
+<div class="cartes">
+<section id="préparer" class="carte">
+<h3>1. Préparer</h3>
+<p>Rassembler les données, les nettoyer, les convertir en cartes</p>
+</section>
+<section id="écrire" class="carte vert">
+<h3>2. Écrire</h3>
+<p>Une page pour chaque indicateur, selon un même modèle</p>
+</section>
+<section id="fabriquer" class="carte marine">
+<h3>3. Fabriquer</h3>
+<p>Quarto assemble les pages, les cartes et les graphiques</p>
+</section>
+<section id="publier" class="carte">
+<h3>4. Publier</h3>
+<p>Le site est mis en ligne et accessible à tous</p>
+</section>
+</div>
+</section>
+<section id="un-défi-des-données-très-volumineuses" class="slide level2">
+<h2>Un défi : des données très volumineuses</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>Les limites de parcelles couvrent tout le territoire.</p>
+<p>Pour que la carte reste <strong>fluide</strong>, il faut alléger les fichiers sans perdre l’information utile.</p>
+</div><div class="column" style="width:50%;">
+<p><span class="gros-chiffre">600 Mo</span> &nbsp;fichier d’origine</p>
+<p><span class="gros-chiffre">110 Mo</span> &nbsp;après allègement</p>
+<div class="legende">
+<p>Exemple de la couche des parcelles</p>
+</div>
+</div></div>
+</section>
+<section id="un-défi-rendre-les-chiffres-lisibles" class="slide level2">
+<h2>Un défi : rendre les chiffres lisibles</h2>
+<p>Certaines valeurs très faibles sont <strong>masquées</strong> pour protéger les données personnelles. Le site les présente de façon claire.</p>
+<table class="caption-top">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Couleur</th>
+<th style="text-align: left;">Signification</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><span class="pastille" style="background:#d9d9d9; color:#1e293b">gris</span></td>
+<td style="text-align: left;">Non concerné</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="pastille" style="background:#fff; color:#1e293b; border:1px solid #cbd5e1">blanc</span></td>
+<td style="text-align: left;">Aucun</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="pastille" style="background:#ffd5d5; color:#1e293b">rose clair</span></td>
+<td style="text-align: left;">De 1 à 19</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="pastille" style="background:#ff0000">rouge</span></td>
+<td style="text-align: left;">100 et plus</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="deux-regards-sur-le-risque" class="slide level2">
+<h2>Deux regards sur le risque</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><span class="pastille" style="background: rgb(0,158,224)">Débordement de cours d’eau</span></p>
+<p>La rivière sort de son lit et inonde les terres voisines.</p>
+</div><div class="column" style="width:50%;">
+<p><span class="pastille" style="background: rgb(151,190,13)">Ruissellement</span></p>
+<p>La pluie ruisselle sur les sols et s’accumule dans les points bas.</p>
+</div></div>
+<p>Un <strong>interrupteur</strong> dans la barre du site permet de passer de l’un à l’autre. Les couleurs changent pour s’y retrouver.</p>
+</section>
+<section id="une-entrée-en-matière" class="slide level2">
+<h2>Une entrée en matière</h2>
+<ul>
+<li>Une <strong>vidéo plein écran</strong> ouvre le site</li>
+<li>Elle montre une vallée avant, pendant et après une crue</li>
+<li>Un bouton permet d’entrer dans l’observatoire à tout moment</li>
+<li>Elle n’est montrée <strong>qu’une seule fois</strong> par visite</li>
+</ul>
+</section>
+<section id="ce-qui-a-demandé-du-travail" class="slide level2">
+<h2>Ce qui a demandé du travail</h2>
+<div class="cartes">
+<section id="des-fichiers-lourds" class="carte">
+<h3>Des fichiers lourds</h3>
+<p>Réduits pour que la carte s’affiche vite</p>
+</section>
+<section id="beaucoup-de-pages" class="carte vert">
+<h3>Beaucoup de pages</h3>
+<p>Organisées en deux thèmes avec un seul menu</p>
+</section>
+<section id="des-écrans-variés" class="carte marine">
+<h3>Des écrans variés</h3>
+<p>Un affichage adapté aux ordinateurs comme aux téléphones</p>
+</section>
+</div>
+</section>
+<section id="et-maintenant" class="slide level2">
+<h2>Et maintenant ?</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><strong>Aujourd’hui</strong></p>
+<p>Grand Poitiers et quelques communes le long de la Vienne, dont Châtellerault</p>
+</div><div class="column" style="width:50%;">
+<p><strong>Demain</strong></p>
+<ul>
+<li>Étendre à tout le territoire Vienne - Clain</li>
+<li>Compléter les pages d’indicateurs</li>
+<li>Proposer des fiches à télécharger</li>
+</ul>
+</div></div>
+</section>
+<section id="merci" class="slide level2">
+<h2>Merci</h2>
+<div class="columns">
+<div class="column" style="width:60%;">
+<p><strong>Le site</strong></p>
+<p><a href="https://mvince11.github.io/Observatoire-eptb-/">mvince11.github.io/Observatoire-eptb-</a></p>
+<p><strong>Contact</strong></p>
+<p>contact@eptb-vienne.fr</p>
+</div><div class="column" style="width:40%;">
+<p><span class="gros-chiffre">Questions ?</span></p>
+</div></div>
+</section>
+<section id="annexe-les-outils-utilisés" class="slide level2 smaller">
+<h2>Annexe : les outils utilisés</h2>
+<p>Pour les personnes qui souhaitent aller plus loin.</p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Outil</th>
+<th style="text-align: left;">À quoi il sert</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Quarto</strong></td>
+<td style="text-align: left;">Fabriquer le site à partir de fichiers texte</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>R</strong></td>
+<td style="text-align: left;">Préparer les données et produire les tableaux</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>QGIS</strong></td>
+<td style="text-align: left;">Traiter les données géographiques</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>MapLibre</strong> et <strong>PMTiles</strong></td>
+<td style="text-align: left;">Afficher la carte interactive</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Plotly</strong></td>
+<td style="text-align: left;">Dessiner les graphiques</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>GitHub Pages</strong></td>
+<td style="text-align: left;">Héberger le site gratuitement</td>
+</tr>
+</tbody>
+</table>
+
+</section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<p><img src="Images/logo_porteurs_projet_transparent.png" class="slide-logo"></p>
+<div class="footer footer-default">
+<p>Observatoire de la vulnérabilité aux inondations Vienne - Clain</p>
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="presentation_files/libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="presentation_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="presentation_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="presentation_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="presentation_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="presentation_files/libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="presentation_files/libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="presentation_files/libs/revealjs/plugin/search/search.js"></script>
+  <script src="presentation_files/libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="presentation_files/libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': false,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: true,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'fade',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'fast',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1280,
+
+        height: 720,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 5.0e-2,
+
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    <script id="quarto-html-after-body" type="application/javascript">
+    window.document.addEventListener("DOMContentLoaded", function (event) {
+      const toggleBodyColorMode = (bsSheetEl) => {
+        const mode = bsSheetEl.getAttribute("data-mode");
+        const bodyEl = window.document.querySelector("body");
+        if (mode === "dark") {
+          bodyEl.classList.add("quarto-dark");
+          bodyEl.classList.remove("quarto-light");
+        } else {
+          bodyEl.classList.add("quarto-light");
+          bodyEl.classList.remove("quarto-dark");
+        }
+      }
+      const toggleBodyColorPrimary = () => {
+        const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+        if (bsSheetEl) {
+          toggleBodyColorMode(bsSheetEl);
+        }
+      }
+      toggleBodyColorPrimary();  
+      const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+      tabsets.forEach(function(tabset) {
+        const tabby = new Tabby('#' + tabset.id);
+      });
+      const isCodeAnnotation = (el) => {
+        for (const clz of el.classList) {
+          if (clz.startsWith('code-annotation-')) {                     
+            return true;
+          }
+        }
+        return false;
+      }
+      const onCopySuccess = function(e) {
+        // button target
+        const button = e.trigger;
+        // don't keep focus
+        button.blur();
+        // flash "checked"
+        button.classList.add('code-copy-button-checked');
+        var currentTitle = button.getAttribute("title");
+        button.setAttribute("title", "Copié");
+        let tooltip;
+        if (window.bootstrap) {
+          button.setAttribute("data-bs-toggle", "tooltip");
+          button.setAttribute("data-bs-placement", "left");
+          button.setAttribute("data-bs-title", "Copié");
+          tooltip = new bootstrap.Tooltip(button, 
+            { trigger: "manual", 
+              customClass: "code-copy-button-tooltip",
+              offset: [0, -8]});
+          tooltip.show();    
+        }
+        setTimeout(function() {
+          if (tooltip) {
+            tooltip.hide();
+            button.removeAttribute("data-bs-title");
+            button.removeAttribute("data-bs-toggle");
+            button.removeAttribute("data-bs-placement");
+          }
+          button.setAttribute("title", currentTitle);
+          button.classList.remove('code-copy-button-checked');
+        }, 1000);
+        // clear code selection
+        e.clearSelection();
+      }
+      const getTextToCopy = function(trigger) {
+          const codeEl = trigger.previousElementSibling.cloneNode(true);
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+      }
+      const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+        text: getTextToCopy
+      });
+      clipboard.on('success', onCopySuccess);
+      if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+        const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+          text: getTextToCopy,
+          container: window.document.getElementById('quarto-embedded-source-code-modal')
+        });
+        clipboardModal.on('success', onCopySuccess);
+      }
+        var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+        var mailtoRegex = new RegExp(/^mailto:/);
+          var filterRegex = new RegExp('/' + window.location.host + '/');
+        var isInternal = (href) => {
+            return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+        }
+        // Inspect non-navigation links and adorn them if external
+     	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+        for (var i=0; i<links.length; i++) {
+          const link = links[i];
+          if (!isInternal(link.href)) {
+            // undo the damage that might have been done by quarto-nav.js in the case of
+            // links that we want to consider external
+            if (link.dataset.originalHref !== undefined) {
+              link.href = link.dataset.originalHref;
+            }
+          }
+        }
+      function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+        const config = {
+          allowHTML: true,
+          maxWidth: 500,
+          delay: 100,
+          arrow: false,
+          appendTo: function(el) {
+              return el.closest('section.slide') || el.parentElement;
+          },
+          interactive: true,
+          interactiveBorder: 10,
+          theme: 'light-border',
+          placement: 'bottom-start',
+        };
+        if (contentFn) {
+          config.content = contentFn;
+        }
+        if (onTriggerFn) {
+          config.onTrigger = onTriggerFn;
+        }
+        if (onUntriggerFn) {
+          config.onUntrigger = onUntriggerFn;
+        }
+          config['offset'] = [0,0];
+          config['maxWidth'] = 700;
+        window.tippy(el, config); 
+      }
+      const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+      for (var i=0; i<noterefs.length; i++) {
+        const ref = noterefs[i];
+        tippyHover(ref, function() {
+          // use id or data attribute instead here
+          let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+          try { href = new URL(href).hash; } catch {}
+          const id = href.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note) {
+            return note.innerHTML;
+          } else {
+            return "";
+          }
+        });
+      }
+      const findCites = (el) => {
+        const parentEl = el.parentElement;
+        if (parentEl) {
+          const cites = parentEl.dataset.cites;
+          if (cites) {
+            return {
+              el,
+              cites: cites.split(' ')
+            };
+          } else {
+            return findCites(el.parentElement)
+          }
+        } else {
+          return undefined;
+        }
+      };
+      var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+      for (var i=0; i<bibliorefs.length; i++) {
+        const ref = bibliorefs[i];
+        const citeInfo = findCites(ref);
+        if (citeInfo) {
+          tippyHover(citeInfo.el, function() {
+            var popup = window.document.createElement('div');
+            citeInfo.cites.forEach(function(cite) {
+              var citeDiv = window.document.createElement('div');
+              citeDiv.classList.add('hanging-indent');
+              citeDiv.classList.add('csl-entry');
+              var biblioDiv = window.document.getElementById('ref-' + cite);
+              if (biblioDiv) {
+                citeDiv.innerHTML = biblioDiv.innerHTML;
+              }
+              popup.appendChild(citeDiv);
+            });
+            return popup.innerHTML;
+          });
+        }
+      }
+    });
+    </script>
+    
+
+</body></html>
