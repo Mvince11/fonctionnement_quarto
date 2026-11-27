@@ -1,0 +1,1966 @@
+/* --- NAVBAR PREMIUM --- */
+
+/* Hauteur, fond, ombre légère */
+.navbar {
+  background: #ffffff !important;
+  border-bottom: 1px solid #e6e6e6;
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+
+/* Logo plus élégant */
+.navbar-brand img {
+  height: 60px !important;
+  width: auto;
+  margin-right: 12px;
+}
+
+.navbar-logo{
+  max-height: inherit;
+}
+
+
+/* Amélioration du collapse mobile */
+.navbar-toggler {
+  display:none;
+}
+
+.accordion a{
+  color: black;
+}
+
+h1 {
+    position: relative;
+    padding-left: 50px; /* Ajustez cet espace selon vos besoins */
+}
+h1::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 30px; /* Largeur du rectangle */
+    height: 100%;
+    background-color: $orangeCerema;
+}
+
+.quarto-title{
+  display: none;
+}
+
+input[type="number"], select {
+    border: 1px solid #ced4da; /* Couleur et épaisseur du cadre */
+    border-radius: 5px; /* Rayon des coins arrondis */
+    padding: 5px; /* Marge intérieure pour l'espace autour du texte */
+}
+
+p{
+  text-align: justify;
+}
+
+img{
+  border-radius: 10px;
+}
+
+/*-- sidebar--*/
+#bslib-sidebar-1{
+  background-color: rgba(255, 255, 255, 1); 
+}
+
+
+#donneesDialog {
+  width: 96vw !important;
+  max-width: 1600px !important;
+  height: 92vh !important;
+  height: 92dvh !important;
+  max-height: none !important;
+  margin: auto !important;
+  padding: 0 !important;
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+#donneesDialog[open] {
+  display: flex !important;
+  flex-direction: column;
+}
+
+#donneesDialog .indicateur-dialog-header,
+#donneesDialog .data-switch {
+  flex: 0 0 auto;
+}
+
+#donneesDialog .data-switch { padding: 8px 16px; }
+
+#donneesDialog .donnees-dialog-body {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  padding: 0 !important;
+}
+
+#donneesDialog .donnees-dialog-body iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+#donneesDialog::backdrop { background: rgba(0, 0, 0, .5); }
+
+@media (max-width: 576px) {
+  #donneesDialog {
+    width: 100vw !important;
+    height: 100dvh !important;
+    max-height: none !important;
+    border-radius: 0;
+  }
+}
+
+#couchesDialog {
+  width: min(520px, 94vw);
+  max-height: 85vh;
+  max-height: 85dvh;
+  padding: 0;
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+#couchesDialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+#couchesDialog .indicateur-dialog-header { flex: 0 0 auto; }
+
+#couchesDialog .couches-dialog-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 12px 16px 16px;
+}
+
+#couchesDialog::backdrop { background: rgba(0, 0, 0, .35); }
+
+/* -----------------------------------------------------------
+   Graphique
+----------------------------------------------------------- */
+
+.gb-slider {
+  display: flex; align-items: center; gap: 14px; flex-wrap: nowrap;
+  width: max-content; max-width: calc(100% - 64px);
+  margin: 8px 16px 8px 48px;
+  font: 500 13px system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: #64748b;
+}
+.gb-slider-label { margin: 0; white-space: nowrap; }
+.gb-range { position: relative; width: 280px; flex: 0 0 280px; height: 28px; }
+.gb-range-track, .gb-range-fill {
+  position: absolute; top: 12px; height: 4px; border-radius: 999px; pointer-events: none;
+}
+.gb-range-track { left: 0; right: 0; background: #fed7aa; }
+.gb-range-fill { background: #f2784b; }
+.gb-range input[type="range"] {
+  position: absolute; left: 0; width: 100%; height: 28px; margin: 0;
+  background: none; pointer-events: none; appearance: none; -webkit-appearance: none;
+}
+.gb-range input[type="range"]::-webkit-slider-thumb {
+  pointer-events: auto; -webkit-appearance: none; appearance: none;
+  width: 16px; height: 16px; border-radius: 50%; cursor: pointer;
+  background: #f2784b; border: 2px solid #fff; box-shadow: 0 0 0 1px #c2410c;
+}
+.gb-range input[type="range"]::-moz-range-thumb {
+  pointer-events: auto; width: 16px; height: 16px; border-radius: 50%; cursor: pointer;
+  background: #f2784b; border: 2px solid #fff; box-shadow: 0 0 0 1px #c2410c;
+}
+.gb-badge {
+  padding: 5px 14px; border-radius: 999px;
+  background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa;
+  font-weight: 600; font-size: 13px;
+}
+.gb-plot {
+  width: 100%; height: 600px; padding: 8px;
+  background: #fff; border-radius: 14px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, .08), 0 6px 20px rgba(15, 23, 42, .06);
+}
+
+
+/* -----------------------------------------------------------
+   Titre de la Map
+----------------------------------------------------------- */
+.map-titre {
+  position: absolute;
+  top: 12px;
+  right: 6%; 
+  max-width: min(520px, calc(100% - 340px));
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, .72);
+  border-left: 4px solid #d1342f;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, .15);
+  font: 600 13.5px/1.35 system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: #1e293b; text-align: center;
+  pointer-events: none;           /* ne gêne pas les clics sur la carte */
+  z-index: 5;
+}
+
+@media (max-width:1028px){
+  .map-titre{
+    top: 68px;
+    right:40%;
+    max-width: min(520px, calc(100% - 40px));
+  }
+}
+
+/* -----------------------------------------------------------
+   MAP LIBRE
+----------------------------------------------------------- */
+
+ html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  
+  html.page-carte,
+html.page-carte body {
+  height: 100%;
+  overflow: hidden;
+}
+
+ .map-container {
+  position: fixed;
+  top: var(--navbar-height, 0px);
+  left: 0;
+  right: 0;
+  bottom: 0;                 /* plus de footer */
+  overflow: hidden !important;
+}
+
+.mapFondDePlan {
+    position: absolute;
+    top: 10px;
+    left: 55px;
+    /* width: 180px; */
+    background-color: rgba(255, 255, 255, 0.8); 
+    color: #000000;
+    font: 13px/20px "Helvetica Neue", Arial, Helvetica, sans-serif;
+    padding: 10px;
+    z-index: 1000;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+  }
+
+.mapLayers {
+    position: absolute;
+    top: 40px;
+    right: 9px;
+    /* width: 180px; */
+    background-color: rgba(255, 255, 255, 0.8); 
+    color: #000000;
+    font: 13px/20px "Helvetica Neue", Arial, Helvetica, sans-serif;
+    /* padding: 10px; */
+    z-index: 1000;
+    /* border-radius: 10px; */
+    /* border: 1px solid #ccc; */
+}
+
+#toggleMapMenuButton {
+    /* background: #fff; */
+    position: absolute;
+    z-index: 1000;
+    padding: 0px;
+    margin: 0px;
+    top: 0px;
+    right: 0px;
+    border-radius: 5px;
+    width: 31px;
+    height: 31px;
+    text-align: center;
+    /* border: 1px solid rgba(0, 0, 0, 0.4); */
+    font-family: 'Open Sans', sans-serif;
+}
+
+#layersList {
+    /* background: #fff; */
+    visibility: hidden;
+    /* Cache visuellement l'élément */
+    position: absolute;
+    z-index: 1000;
+    top: 31px;
+    right: 0px;
+    border-radius: 8px;
+    width: 180px;
+    border: 1px solid rgba(0, 0, 0, 0.6);
+    box-shadow: 0px 8px 24px 0px rgba(0, 0, 0, 0.8);
+    font-family: 'Open Sans', sans-serif;
+
+    /* Animation de départ */
+    transform: scale(0.8);
+    /* Départ avec une taille réduite */
+    opacity: 0;
+    transition: visibility 0s, opacity 0.4s ease;
+}
+
+/* Afficher le menu quand on survole le bouton ou le menu */
+/*.mapLayers:hover #layersList,
+#layersList:hover {
+    visibility: visible;
+    /* Rendre visible l'élément */
+   /* opacity: 1;
+    /*animation: popEffect 0.4s ease forwards;
+    /* Animation de pop */
+/*}
+
+/* Définir l'animation de pop */
+/*@keyframes popEffect {
+    /*0% {
+        /*transform: scale(0.0);
+        /* Départ plus petit */
+    /*}
+
+    50% {
+        transform: scale(1.1);
+        /* Agrandissement au-dessus de 100% */
+    /*}
+
+    100% {
+        transform: scale(1);
+        /* Retour à la taille normale */
+    /*}
+/*}
+
+#layersList a {
+    font-size: 12px;
+    color: #ffffff;
+    opacity: 0.75;
+    display: block;
+    margin: 0;
+    /* padding: 0; */
+   /* padding: 2px;
+    /*text-decoration: none;
+   /* border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+   /* text-align: center;
+/*}
+
+#layersList a:first-child {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+#layersList a:last-child {
+    border-bottom: none;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+#layersList a:hover {
+    background-color: #ffef60;
+    color: #000000;
+    opacity: 1;
+
+}
+
+#layersList a.active {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+#layersList a.active:hover {
+    background: #ffef60;
+}*/
+
+
+:root {
+  --accent: #198754;
+  --accent-soft: #e8f5ee;
+  --texte: #1e293b;
+  --bordure: #cbd5e1;
+}
+
+/* Ligne entière cliquable, avec survol */
+.form-check {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 2px 0;
+  padding: 8px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color .15s ease;
+}
+
+.form-check:hover {
+  background: #f1f5f9; 
+}
+
+.form-check {
+  border-left: 3px solid transparent;   /* réserve la place, évite le décalage */
+}
+.form-check.actif {
+  background: var(--accent-soft);
+  border-left-color: cadetblue;
+}
+
+/* Case */
+.form-check-input {
+  appearance: none;
+  -webkit-appearance: none;
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  border: 2px solid var(--bordure);
+  border-radius: 6px;
+  background-color: #fff;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 0;                    /* coche cachée */
+  cursor: pointer;
+  transition: background-color .15s ease, border-color .15s ease,
+              box-shadow .15s ease, background-size .15s ease;
+}
+.form-check-input:hover {
+  border-color: var(--accent); 
+  
+}
+
+.form-check-input:checked {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  background-size: 12px;                 /* coche visible */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7'/%3E%3C/svg%3E");
+}
+
+/* Focus clavier visible et discret */
+.form-check-input:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(25, 135, 84, .25);
+}
+
+/* Libellé */
+.form-check-label {
+  flex: 1;
+  text-align: left;
+  font: 500 14px/1.3 system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--texte);
+  cursor: pointer;
+  user-select: none;
+}
+  
+/*-- OJS --*/
+.observablehq td, .observablehq th {
+    white-space: normal;
+    word-break: break-word;
+}
+
+.maplibregl-control-container {
+    z-index: 10; /* Assurez-vous que les contrôles sont visibles */
+}
+
+
+
+.bslib-card .bslib-navs-card-title .nav{
+  margin-left: inherit;
+}
+
+  /*.navbar .navbar-collapse {
+    margin-left: auto;
+    overflow: visible;
+    
+    opacity: 1;
+    border-radius: 8px;
+    height: 80px;
+  }*/
+
+#photos_crues {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1vw;
+  justify-content: center;
+  margin-left: 10px;
+}
+
+#photos_crues img {
+  max-width: 100%;
+  width: 48%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+#quarto-navbar-collapse,
+#navbarCollapse {
+  display: none !important;
+}
+
+#quarto-document-content {
+  padding-top: 150px; 
+}
+
+#quarto-margin-sidebar{
+  padding-top: 150px;
+}
+
+#quarto-sidebar{
+  margin-top: 150px;
+  background-color: #464749;
+}
+
+
+.text-start{
+  font-size: 1.3em;
+  color: white;
+}
+
+.sidebar-item-container{
+  font-size: 0.9em;
+}
+
+div.sidebar-item-container{
+  color: white;
+  padding: 5px;
+  border: 1px solid;
+  border-color: darkgray;
+  background-color: gray;
+  border-radius: 4px;
+}
+
+.sidebar #quarto-search{
+  background-color: white;
+  border: 1px solid;
+  border-radius: 15px;
+  width: 15% !important;
+}
+
+.quarto-dashboard #quarto-header #quarto-dashboard-header > nav{
+  margin-top: 125px;
+  position: inherit;
+}
+
+.px-1 {
+  display: block;
+  display: block;
+  margin-bottom: 8px;
+  border: 1px solid aliceblue;
+  border-radius: 25px;
+  text-align: center;
+  padding: 3px;
+  font-size: 22px;
+}
+
+.px-1:hover{
+  background: rgba(255,255,255,0.4); /* effet verre renforcé au survol */
+  transition: background 0.3s ease, border-radius 0.3s ease;
+}
+
+
+.bi-envelope{
+  color:black;
+}
+/*.px-1 > i {
+  font-size: 1.5rem;
+}*/
+
+.bi-linkedin{
+  color: #3f72ce;
+}
+
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  position: absolute;
+  bottom: 150%; /* distance au-dessus du bouton */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #fff;
+  color: rgba(0, 0, 0, 0.75);
+  font-size: 12px;
+  padding: 5px 8px;
+  border-radius: 8px;
+  white-space: nowrap;
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip-container:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+
+.ctrl-reset-view {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  color: #334155;
+  height: 40px !important;
+  width: 40px !important;
+}
+
+.ctrl-reset-view:hover {
+  color: #1d4ed8; 
+  
+}
+
+
+/* =====================================================
+   Conteneur du sélecteur
+===================================================== */
+
+/* Conteneur général */
+#fondListDiv {
+  position: absolute;
+  bottom: 30px;
+  right: 120px;
+  z-index: 999;
+
+  width: 100px;
+  height: 100px;
+
+  overflow: visible;
+}
+
+
+/* =====================================================
+   Vignettes
+===================================================== */
+
+.fond-item {
+  position: absolute;
+
+  top: 0;
+
+  width: 80px;
+  height: 80px;
+
+  overflow: hidden;
+
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+
+  transition:
+    left 0.25s ease,
+    opacity 0.25s ease,
+    transform 0.25s ease;
+    
+  text-align: center;
+}
+
+
+@media(max-width:568px){
+  .fond-item {
+  width: 50px;
+  height: 50px;
+  }
+  
+  #fondListDiv.hover-active .fond-item.inactive {
+  left: calc(
+    113px - ((var(--inactive-position) + 1) * 55px)
+  ) !important;
+  }
+  
+  #fondListDiv {
+  bottom: 0px;
+  right: 70px;
+  }
+  
+  .fond-item span {
+  padding: 0 !important;
+  font-size: 9px !important;
+  }
+}
+/* =====================================================
+   Image
+===================================================== */
+
+.fond-item img {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+
+/* =====================================================
+   Titre
+===================================================== */
+
+.fond-item span {
+  position: absolute;
+
+  left: 6px;
+  right: 6px;
+  bottom: 4px;
+
+  padding: 3px 4px;
+
+  font-size: 11px;
+  line-height: 1.15;
+  overflow: hidden;
+
+  color: white;
+
+  background: rgba(0, 0, 0, 0.55);
+
+  border-radius: 4px;
+
+  opacity: 0;
+
+  transition: opacity 0.2s ease;
+
+  pointer-events: none;
+}
+
+
+/* =====================================================
+   VIGNETTE ACTIVE
+===================================================== */
+
+.fond-item.active {
+  left: 113px;
+
+  opacity: 1;
+
+  z-index: 2;
+
+  pointer-events: auto;
+  
+  border: 1px solid #00a6a6;
+}
+
+
+/* titre de l'active */
+.fond-item.active span {
+  opacity: 1;
+}
+
+
+/* =====================================================
+   VIGNETTE INACTIVE
+===================================================== */
+
+.fond-item.inactive {
+  left: 0px;
+
+  opacity: 0;
+
+  z-index: 1;
+
+  pointer-events: none;
+
+  transform: translateX(0);
+}
+
+
+/* =====================================================
+   INACTIVE VISIBLE AU SURVOL
+===================================================== */
+
+#fondListDiv.hover-active .fond-item.inactive {
+  left: calc(
+    113px - ((var(--inactive-position) + 1) * 90px)
+  );
+
+  right: auto;
+
+  opacity: 1;
+  z-index: 3;
+  pointer-events: auto;
+
+  transform: translateX(0);
+
+  border: 1px solid #00a6a6;
+}
+
+
+/* titre de la vignette proposée */
+#fondListDiv.hover-active .fond-item.inactive span {
+  opacity: 1;
+}
+
+/* =====================================================
+   Effet au survol de la vignette proposée
+===================================================== */
+
+#fondListDiv.hover-active .fond-item.inactive:hover {
+  transform: scale(1.03);
+}
+
+#toggleInondableContainer {
+  position: absolute;
+  bottom: 238px;
+  right: 20px;
+  z-index: 999;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,0.9);
+  padding: 6px 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  font-family: sans-serif;
+  font-size: 14px;
+}
+
+#toggleInondableBtn {
+  background: white;
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background .25s ease, transform .25s ease;
+}
+
+#toggleInondableBtn.active {
+  background: #4a7aff;
+  transform: scale(1.05);
+}
+
+#toggleInondableBtn i {
+  font-size: 20px;
+  color: #333;
+}
+
+#toggleInondableBtn.active i {
+  color: white;
+}
+
+/* =====================================================
+   Boutons pour rubrique Data Tableau/Graphique
+===================================================== */
+.data-switch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  padding: 6px;
+
+  margin: 10px auto 15px auto;
+
+  background: #f1f3f7;
+  border: 1px solid #e1e4ea;
+  border-radius: 10px;
+
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.08);
+
+  width: fit-content;
+}
+
+.data-switch-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  border: none;
+  border-radius: 7px;
+
+  background: transparent;
+  color: #293574;
+
+  padding: 8px 36px;
+
+  font-size: 16px;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.15s ease;
+}
+
+.data-switch-btn i {
+  font-size: 15px;
+}
+
+/* Bouton actif */
+.data-switch-btn.active {
+  background: #293574;
+  color: white;
+
+  box-shadow:
+    0 2px 5px rgba(41, 53, 116, 0.25);
+}
+
+/* Survol */
+.data-switch-btn:not(.active):hover {
+  background: rgba(41, 53, 116, 0.08);
+  color: #293574;
+}
+
+/* Petit effet au clic */
+.data-switch-btn:active {
+  transform: scale(0.97);
+}
+/* =====================================================
+   Fin Boutons pour rubrique Data Tableau/Graphique
+===================================================== */
+
+/* Popup*/
+/* =========================
+   POPUP MAPLIBRE
+   ========================= */
+
+.maplibregl-popup {
+  max-width: 320px !important;
+}
+
+.maplibregl-popup-content {
+  padding: 0 !important;
+  width: min(290px, calc(100vw - 32px));   /* ne dépasse jamais l'écran */
+  border: none !important;
+  border-radius: 12px !important;
+  overflow: hidden;                         /* garde les coins arrondis de l'image */
+  background: #ffffff;
+  box-shadow:
+    0 8px 24px rgba(41, 53, 116, 0.18),
+    0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* Le défilement se fait dans le contenu, le bouton fermer reste fixe */
+.popup-content {
+  max-height: 60vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.popup-image {
+  display: block;
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+}
+
+.popup-indicator > div:last-child { min-width: 0; }
+.popup-label { display: block; overflow-wrap: anywhere; }
+
+/* Petite pointe de la popup */
+.maplibregl-popup-tip {
+  border-top-color: #ffffff !important;
+  border-bottom-color: #ffffff !important;
+}
+
+/* Bouton fermeture */
+.maplibregl-popup-close-button {
+  top: 8px !important;
+  right: 8px !important;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92) !important;
+  color: #293574 !important;
+  font-size: 20px !important;
+  line-height: 26px !important;
+  z-index: 10;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.maplibregl-popup-close-button:hover {
+  background: #293574 !important;
+  color: white !important;
+}
+
+/* ===== Smartphone / petite résolution : panneau fixé en bas ===== */
+@media (max-width: 576px) {
+  .maplibregl-popup-content { width: min(260px, calc(100vw - 32px)); }
+  .popup-content { max-height: 50vh; }
+  .popup-image { height: 90px; }
+  .popup-title { font-size: 1rem; }
+  .popup-value { font-size: 1rem; }
+
+  .maplibregl-popup-close-button {
+    width: 36px;
+    height: 36px;
+    line-height: 34px !important;
+    font-size: 24px !important;
+  }
+}
+
+/* =====================================================
+   barre de recherche adresse ou parcelle
+===================================================== */
+
+.mapboxgl-ctrl-geocoder--input:focus,
+.maplibregl-ctrl-geocoder--input:focus {
+    outline: none;
+    border-color: #3182ce; /* Bleu */
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.2);
+}
+
+.maplibregl-ctrl-geocoder--input{
+  border-radius: 6px;
+}
+
+/* ---------- Barre de recherche ---------- */
+.maplibregl-ctrl-geocoder {
+  width: 360px; max-width: calc(100vw - 24px);
+  min-width: 0 !important;
+  border-radius: 14px;
+  box-shadow: 0 6px 24px rgba(15, 23, 42, .18), 0 1px 3px rgba(15, 23, 42, .1);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  margin: -44px 0 0 60px !important;
+}
+
+.maplibregl-ctrl-geocoder input[type="text"] {
+  height: 46px; padding: 0 40px 0 44px;
+  border-radius: 14px; font-size: 14.5px; color: #0f172a;
+}
+
+.maplibregl-ctrl-geocoder input[type="text"]::placeholder { color: #94a3b8; }
+.maplibregl-ctrl-geocoder input[type="text"]:focus { outline: 2px solid #3b82f6; outline-offset: -2px; }
+.maplibregl-ctrl-geocoder--icon-search { top: 13px; left: 14px; }
+
+/* ---------- Panneau de mode ---------- */
+.geo-panel {
+  position: absolute; top: calc(100% + 8px); left: 0; width: 100%;
+  box-sizing: border-box; padding: 10px;
+  background: #fff; border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, .2), 0 1px 3px rgba(15, 23, 42, .1);
+  z-index: 1001;
+  opacity: 0; transform: translateY(-6px); pointer-events: none;
+  transition: opacity .18s ease, transform .18s ease;
+}
+.geo-open .geo-panel { opacity: 1; transform: none; pointer-events: auto; }
+
+/* ---------- Sélecteur segmenté ---------- */
+.geo-seg {
+  position: relative; display: grid; grid-template-columns: 1fr 1fr;
+  padding: 4px; background: #f1f5f9; border-radius: 10px;
+}
+.geo-thumb {
+  position: absolute; top: 4px; bottom: 4px; left: 4px;
+  width: calc(50% - 4px);
+  background: #fff; border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, .18);
+  transition: transform .25s cubic-bezier(.4, 0, .2, 1);
+}
+
+.geo-panel[data-mode="parcelle"] .geo-thumb { transform: translateX(100%); }
+
+.geo-seg button {
+  position: relative; z-index: 1;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 8px 0; border: 0; background: transparent; cursor: pointer;
+  font: 500 13.5px system-ui, sans-serif; color: #64748b;
+  transition: color .2s;
+}
+
+.geo-seg button:hover { color: #0f172a; }
+.geo-seg button[aria-selected="true"] { color: #1d4ed8; }
+
+.geo-hint { margin: 8px 4px 0; font-size: 12px; color: #64748b; }
+
+/* ---------- Suggestions sous le panneau ---------- */
+.geo-open .maplibregl-ctrl-geocoder .suggestions,
+.geo-open.maplibregl-ctrl-geocoder .suggestions {
+  top: calc(100% + 94px) !important;
+  border-radius: 12px; overflow: hidden;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, .2);
+}
+
+.maplibregl-ctrl-geocoder .suggestions > li > a {
+  padding: 10px 14px; 
+}
+
+/* =====================================================
+   Fin barre de recherche adresse ou parcelle
+===================================================== */
+
+/* Conteneur : c'est lui qui est positionné */
+.legend-stack {
+  position: absolute;
+  bottom: 60px;
+  left: 10px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;     /* population en haut, bâtiments en dessous */
+  gap: 8px;
+  max-width: calc(100vw - 20px);
+  max-height: calc(100% - 80px);
+  overflow-y: auto;
+  pointer-events: none;       /* la carte reste cliquable entre les légendes */
+}
+
+.map-legend {
+  --legend-font: 12px;
+  --legend-pad: 10px;
+  --legend-swatch: 12px;
+
+  pointer-events: auto;
+  background: #fff;
+  padding: var(--legend-pad);
+  font-size: var(--legend-font);
+  line-height: 1.3;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.3);
+}
+
+.map-legend .legend-swatch {
+  display: inline-block;
+  width: var(--legend-swatch);
+  height: var(--legend-swatch);
+  margin-right: 5px;
+  vertical-align: -1px;
+}
+
+@media (max-width: 768px) {
+  .legend-stack { bottom: 50px; gap: 6px; }
+  .map-legend { --legend-font: 11px; --legend-pad: 8px; --legend-swatch: 10px; }
+}
+
+@media (max-width: 576px) {
+  .legend-stack { bottom: 40px; left: 6px; gap: 5px; }
+  .map-legend { --legend-font: 10px; --legend-pad: 6px; --legend-swatch: 9px; }
+}
+
+@media (max-width: 380px), (max-height: 420px) {
+  .legend-stack { bottom: 30px; gap: 4px; }
+  .map-legend { --legend-font: 9px; --legend-pad: 5px; --legend-swatch: 8px; }
+}
+
+
+/* Contenu général */
+.popup-content {
+  font-family: Avenir, Arial, sans-serif;
+  color: #293574;
+}
+
+/* Image */
+.popup-image {
+  display: block;
+  width: 100%;
+  height: 145px;
+  object-fit: contain;
+}
+
+/* Partie basse */
+.popup-body {
+  padding: 16px 17px 15px 17px;
+}
+
+/* Nom de la commune */
+.popup-title {
+  margin: 0 0 14px 0;
+  padding-bottom: 10px;
+
+  font-size: 17px;
+  font-weight: 600;
+  color: #293574;
+
+  border-bottom: 1px solid #e5e7ef;
+}
+
+/* Bloc indicateur */
+.popup-indicator {
+  display: flex;
+  align-items: center;
+
+  min-height: 48px;
+  margin-bottom: 8px;
+  padding: 8px 10px;
+
+  border-radius: 8px;
+  background: #f7f8fb;
+}
+
+/* Icône */
+.popup-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 34px;
+  height: 34px;
+  margin-right: 10px;
+
+  border-radius: 50%;
+
+  background: #eef0f8;
+  color: #293574;
+
+  font-size: 17px;
+  flex-shrink: 0;
+}
+
+/* Texte indicateur */
+.popup-label {
+  display: block;
+
+  margin-bottom: 2px;
+
+  font-size: 11px;
+  line-height: 1.25;
+  color: #69708a;
+}
+
+/* Valeur */
+.popup-value {
+  display: block;
+
+  font-size: 17px;
+  font-weight: 600;
+  color: #293574;
+}
+
+/* Indicateur inondation */
+.popup-indicator.inondation {
+  background: #fff7f3;
+}
+
+.popup-indicator.inondation .popup-icon {
+  background: #fde9df;
+  color: #ef7757;
+}
+
+.popup-indicator.inondation .popup-value {
+  color: #ef7757;
+}
+
+/* Dernier élément */
+.popup-indicator:last-child {
+  margin-bottom: 0;
+}
+
+/* Fin de la Popup */
+
+#dashboard-collapse{
+  height: auto;
+  margin-bottom: 8px;
+  margin-top: 0 !important;
+}
+
+
+/*.navbar-nav .dropdown-menu{
+  max-width: max-content;
+}*/
+
+.navbar-title {
+  color: orangered;
+  /*font-size: 1.4em;*/
+  white-space: normal;    /* autorise le retour à la ligne */
+  max-width: 560px;       /* optionnel, pour forcer la coupure */
+  text-align: center;     /* optionnel, pour centrer */
+}
+
+.navbar-title-text{
+  color: initial;
+}
+
+.navbar-brand .navbar-title {
+  font-weight: bold;
+  font-size: 1rem;       /* ajuste la taille du titre */
+  line-height: 1.2;       /* évite que ça saute trop */
+  text-align: center;     /* centre le texte sous le logo */
+}
+
+.navbar-brand {
+  display: flex;
+  flex-direction: column; /* empile logo puis texte */
+  align-items: center;    /* centre logo et texte */
+}
+
+.navbar .navbar-container > .navbar-brand-container {
+  margin-right: auto !important;
+}
+
+.quarto-navbar-tools{
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+/* Style du lien admin */
+.nav-link[href*="login"] {
+  display: flex;
+  background: rgba(255,255,255,0.25);
+  border-radius: 14px;
+  padding: 8px 14px;
+  backdrop-filter: blur(8px) saturate(180%);
+  -webkit-backdrop-filter: blur(8px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.35);
+  transition: all 0.25s ease;
+  font-weight: 600;
+}
+
+/* Hover premium */
+.nav-link[href*="login"]:hover {
+  background: rgba(255,255,255,0.35);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.nav-link[href*="login"] .menu-text {
+  margin-left: 6px;
+}
+
+.collapse-box{
+    margin: 40px !important;
+  }
+  
+.nav .navbar-collapse{
+  display: none;
+}
+
+/* =====================================================
+   Barre latérale carte
+===================================================== */
+#rightTabs {
+  position: absolute;
+  top: 192px;
+  right: 0px; 
+  width: 55px;
+  background: #F7F9FB;
+  border-left: 1px solid #D6DEE6;
+  border-radius: 6px 0 0 6px;
+  box-shadow: -2px 0 6px rgba(0,0,0,0.15);
+  z-index: 3000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 0;
+}
+
+
+/* --- Boutons --- */
+#rightTabs .tool-btn {
+  width: 100%;
+  height: 55px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #2A3B4D;
+  font-size: 22px;
+  border-bottom: 1px solid #D6DEE6;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --- Dernier bouton sans bord --- */
+#rightTabs .tool-btn:last-child {
+  border-bottom: none;
+}
+
+/* --- Hover IGN --- */
+#rightTabs .tool-btn:hover {
+  background: #E9EEF3;
+}
+
+/* --- Bouton actif IGN --- */
+#rightTabs .tool-btn.active {
+  background: #E9EEF3;
+  color: #0063A3;
+}
+
+#rightPanel {
+  position: absolute;
+  top: 40px;
+  right: 0px;
+  width: 225px;
+  height: calc(100% - 140px);
+  background: white;
+  border-left: 1px solid #D6DEE6;
+  box-shadow: -2px 0 6px rgba(0,0,0,0.2);
+  border-radius: 6px 0 0 6px;
+  padding: 15px;
+  overflow-y: auto;
+  display: none; /* caché par défaut */
+  z-index: 3000;
+}
+
+
+#rightTabsToggle:hover {
+  background: #E9EEF3;
+}
+
+
+/* --- Label flottant façon Géoportail --- */
+.rightTabs-label {
+  position: absolute;
+  background: #FFFFFF;
+  border: 1px solid #D6DEE6;
+  padding: 6px 10px;
+  font-size: 14px;
+  color: #2A3B4D;
+  border-radius: 4px;
+  box-shadow: 0 0 6px rgba(0,0,0,0.15);
+  white-space: nowrap;
+  z-index: 4000;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+/* Onglet agrandi */
+.rightpanel-large {
+  height: 100% !important; /* plus haut */
+  overflow-y: auto !important;
+  width: auto !important;
+  top: 0 !important;
+}
+
+.rightpanel-full {
+  height: calc(100% - 40px)!important;
+  overflow-y: hidden!important;
+  width: 100% !important;
+  top: 0 !important;
+}
+
+.rightpanel-full2 {
+  height: 100% !important;
+  overflow-y: auto;
+  width: 100% !important;
+  top: 0 !important;
+}
+
+/* ---------- Bouton de fermeture (panneau) ---------- */
+.close-btn,
+.dialog-close-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border: 1px solid #435481;
+  border-radius: 999px;
+  background: #fff;
+  color: #435481;
+  font-size: 0.85rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color .15s, color .15s;
+}
+.close-btn:hover,
+.dialog-close-btn:hover {
+  background: #435481;
+  color: #fff;
+}
+
+/* ---------- Modale ---------- */
+.indicateur-dialog {
+  width: min(900px, 92vw);
+  max-height: 85vh;
+  padding: 0;                       /* nécessaire pour détecter le clic sur le fond */
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, .35);
+  overflow: hidden;
+}
+.indicateur-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+.indicateur-dialog::backdrop {
+  background: rgba(20, 30, 50, .55);
+}
+
+.indicateur-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 20px;
+  border-bottom: 1px solid #e3e6ee;
+}
+.indicateur-dialog-header h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  color: #435481;
+  border: none;
+}
+
+.indicateur-dialog-body {
+  padding: 20px;
+  overflow-y: auto;                 /* défilement si les callouts sont dépliés */
+}
+
+/* Animation de rotation du bouton Menu */
+#menuButton svg {
+  transition: transform 0.3s ease;
+}
+
+#menuButton.rotated svg {
+  transform: rotate(90deg);
+}
+
+
+/* --- Couleur Géoportail unifiée --- */
+#menuButton {
+  background: #F7F9FB !important;
+  border: 1px solid #D6DEE6 !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15) !important;
+}
+
+#menuButton:hover {
+  background: #E9EEF3 !important; /* hover Géoportail */
+}
+
+/* Label "Menu" sous le bouton */
+#menuLabel {
+  color: #2A3B4D;
+}
+
+/* --- SideMenu Géoportail --- */
+#sideMenu {
+  background: #F7F9FB !important;
+  border-right: 1px solid #D6DEE6 !important;
+  box-shadow: 2px 0 6px rgba(0,0,0,0.15) !important;
+  color: #2A3B4D;
+  font-family: "Roboto", sans-serif;
+}
+
+/* --- TITRE "Menu" --- */
+#sideMenu h3 {
+  color: #2A3B4D;
+  font-size: 20px;
+  font-weight: 600;
+  margin: 10px 0 20px 15px;
+}
+
+/* --- ACCORDÉONS GÉOPORTAIL --- */
+#sideMenu .accordion-item {
+  background: #FFFFFF;
+  border: 1px solid #D6DEE6;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+#sideMenu .accordion-button {
+  background: #FFFFFF;
+  color: #2A3B4D;
+  font-weight: 600;
+  padding: 12px 15px;
+  border: none;
+  box-shadow: none;
+}
+
+#sideMenu .accordion-button:not(.collapsed) {
+  background: #E9EEF3; /* bleu clair Géoportail */
+  color: #0063A3;       /* bleu IGN */
+}
+
+#sideMenu .accordion-button:hover {
+  background: #E9EEF3;
+}
+
+#sideMenu .accordion-body {
+  background: #FFFFFF;
+  padding: 10px 15px 15px 15px;
+}
+
+/* --- LIENS DANS LE MENU --- */
+#sideMenu a {
+  color: #2A3B4D;
+  text-decoration: none;
+  font-size: 15px;
+}
+
+#sideMenu a:hover {
+  color: #0063A3;
+  text-decoration: underline;
+}
+
+.bi::before {
+    display: inline-block;
+}
+
+/* --- TOOLS EN BAS --- */
+#toolsContainer {
+  padding: 10px 15px;
+}
+
+#toolsContainer a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #2A3B4D;
+  font-size: 15px;
+  text-decoration: none;
+  margin-bottom: 10px;
+}
+
+#toolsContainer a:hover {
+  color: #0063A3;
+  text-decoration: underline;
+}
+
+/* --- ICÔNES BOOTSTRAP --- */
+#sideMenu i.bi {
+  font-size: 1.3rem;
+  color: #0063A3;
+}
+
+/* Style de base du label Menu */
+.menu-label {
+  position: absolute;
+  left: 33px;              /* aligné sous le bouton */
+  top: 70px;               /* hauteur par défaut */
+  font-size: 20px;
+  font-weight: 600;
+  color: #444;
+  pointer-events: none;    /* évite les clics involontaires */
+  transition: top 0.25s ease, font-size 0.25s ease;
+}
+
+/* Footer global */
+.footer {
+  width: 100%;;
+  background: #fff;
+  border-top: 1px solid #e6e6e6;
+}
+
+/* ================================
+   FOOTER QUARTO
+   ================================ */
+
+.nav-footer {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+
+  width: 100%;
+  min-height: 55px;
+
+  padding: 10px 25px !important;
+
+  font-family: Avenir, Arial, sans-serif;
+  font-size: 13px;
+
+  background-color: #ffffff !important;
+  border-top: 1px solid #e5e7ef;
+
+  box-sizing: border-box;
+}
+
+
+/* Les trois zones */
+.nav-footer-left,
+.nav-footer-center,
+.nav-footer-right {
+  display: flex !important;
+  align-items: center !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
+  white-space: nowrap;
+}
+
+
+/* Gauche */
+.nav-footer-left {
+  justify-content: flex-start;
+  flex: 1;
+}
+
+
+/* Centre */
+.nav-footer-center {
+  justify-content: center;
+  flex: 1;
+
+  color: #293574;
+}
+
+
+/* Droite */
+.nav-footer-right {
+  justify-content: flex-end;
+  flex: 1;
+}
+
+
+/* Liens */
+.nav-footer a {
+  color: #293574 !important;
+  text-decoration: none !important;
+
+  transition: color 0.2s ease;
+}
+
+
+/* Hover */
+.nav-footer a:hover {
+  color: #ef7757 !important;
+}
+
+
+/* Icônes réseaux sociaux */
+.nav-footer-right a {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+
+  width: 30px;
+  height: 30px;
+
+  margin-left: 7px;
+
+  font-size: 1.15rem;
+
+  border-radius: 50%;
+}
+
+
+/* Effet au survol des icônes */
+.nav-footer-right a:hover {
+  background-color: #f7f8fb;
+}
+
+
+/* ================================
+   TABLETTE
+   ================================ */
+
+@media (max-width: 768px) {
+
+  .nav-footer {
+    padding: 8px 15px !important;
+    font-size: 12px;
+  }
+
+  .nav-footer-right a {
+    width: 27px;
+    height: 27px;
+    margin-left: 4px;
+    font-size: 1rem;
+  }
+}
+
+
+/* ================================
+   MOBILE
+   ================================ */
+
+@media (max-width: 550px) {
+
+  .nav-footer {
+    flex-wrap: wrap;
+    justify-content: center !important;
+
+    gap: 5px 15px;
+
+    min-height: auto;
+    padding: 10px 15px !important;
+  }
+
+  .nav-footer-left,
+  .nav-footer-center,
+  .nav-footer-right {
+    flex: none;
+
+    width: auto;
+  }
+
+  .nav-footer-left {
+    order: 1;
+  }
+
+  .nav-footer-center {
+    order: 2;
+  }
+
+  .nav-footer-right {
+    order: 3;
+  }
+}
+
+@media(max-width:930px){
+  #quarto-document-content {
+  padding-top: 170px; 
+}
+}
+
+@media(min-width:320px) and (max-width:666px){
+  #quarto-document-content {
+  padding-top: 190px; 
+}
+}
+
+@media(max-width:785px){
+  .hero .badge-cle{
+    display: block !important;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --footer-height:40px !important;
+  }
+}
+
+/* Écrans larges (desktop) */
+@media (min-width: 1400px) {
+  .menu-label {
+    top: 72px;
+    font-size: 21px;
+  }
+}
+
+/* Écrans moyens (tablettes paysage / laptop compact) */
+@media (max-width: 1200px) {
+  .menu-label {
+    top: 70px;
+    font-size: 19px;
+  }
+}
+
+/* Tablettes portrait */
+@media (max-width: 992px) {
+  .menu-label {
+    top: 88px;
+    font-size: 18px;
+  }
+}
+
+/* Smartphones portrait */
+@media (max-width: 768px) {
+  .menu-label {
+    top: 96px;
+    font-size: 18px;
+  }
+}
+
+/* Smartphones paysage (ton cas problématique) */
+@media (max-width: 768px) and (orientation: landscape) {
+  .menu-label {
+    top: 92px;
+    font-size: 16px;
+  }
+}
+
+/* Très petits écrans */
+@media (max-width: 480px) {
+  .menu-label {
+    top: 92px;
+    font-size: 15px;
+  }
+  
+  .header-flex img{
+    width:250px !important;
+  }
+}
+
+
+@media (max-width: 768px) {
+  #photos_crues img {
+    width: 100%;
+  }
+}
+
+@media (min-width: 666px) and (max-width: 992px){
+   .navbar-brand-container{
+  display: block;
+  }
+  
+  .collapse-box{
+    margin: 130px 0 20px !important;
+  }
+  
+  /*#menuLabel{
+    top: 88px !important;
+  }*/
+}
+
+@media(max-width: 665px){
+  
+  .navbar-brand-container{
+  display: block;
+  }
+  
+  .collapse-box{
+    margin: 160px 0 20px !important;
+  }
+  
+  .navbar-nav-scroll{
+    overflow: visible !important; /* ⭐ le dropdown peut sortir */
+  }
+
+  .navbar-nav-scroll .dropdown-item{
+    white-space: normal;           /* ⭐ retour à la ligne */
+  }
+  
+     /* #menuLabel{
+    top: 88px !important;
+  }*/
+}
+
+@media (min-width: 868px){
+  .navbar-title {
+  color: orangered;
+  /*font-size: 1.4em;*/
+  white-space: normal;    /* autorise le retour à la ligne */
+  max-width: 560px;       /* optionnel, pour forcer la coupure */
+  text-align: center;     /* optionnel, pour centrer */
+  }
+
+.navbar-brand .navbar-title {
+  font-weight: bold;
+  font-size: 1.1rem;       /* ajuste la taille du titre */
+  line-height: 1.2;       /* évite que ça saute trop */
+  text-align: center;     /* centre le texte sous le logo */
+  }
+}
+
+@media(max-width:500px){
+  .navbar-logo{
+    max-height: 60px;
+  }
+  
+    /*#menuLabel{
+    top: 88px !important;
+  }*/
+}
+
+@media (max-width: 1052px) {
+  .collapse-content .flex-columns {
+    flex-direction: column !important;
+    gap: 20px !important;
+  }
+
+  .collapse-content .flex-columns > div {
+    width: 100% !important;
+    flex: none !important;
+  }
+}
+
+/* Très petits écrans */
+/*media (max-width: 480px) {
+  .menu-label {
+    top: 115px;
+    font-size: 16px;
+  }
+}*/
+

@@ -1,0 +1,516 @@
+---
+title: "Construire l'Observatoire avec Quarto"
+subtitle: "Architecture du site, pages d'indicateurs, chunks et code"
+author: "[Votre nom]"
+date: today
+date-format: "D MMMM YYYY"
+lang: fr
+engine: markdown
+execute:
+  echo: false
+format:
+  revealjs:
+    theme: simple
+    width: 1280
+    height: 720
+    margin: 0.05
+    slide-number: c/t
+    footer: "Observatoire de la vulnérabilité aux inondations Vienne - Clain"
+    logo: Images/logo_porteurs_projet_transparent.png
+    transition: fade
+    transition-speed: fast
+    controls: true
+    progress: true
+    # --- Anti-boucle ---
+    hash: false
+    history: false
+    loop: false
+    auto-slide: 0
+    preview-links: false
+    embed-resources: true
+    title-slide-attributes:
+      data-background-gradient: "linear-gradient(135deg, #435481 0%, #009EE0 100%)"
+    include-in-header:
+      text: |
+        <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lora:wght@600&display=swap');
+
+        .reveal { font-size: 34px; color: #1e293b; }
+        .reveal h1, .reveal h2, .reveal h3 { font-family: "Lora", Georgia, serif; color: #435481; text-transform: none; }
+        .reveal h2 { display: inline-block; border-bottom: 3px solid #009EE0; padding-bottom: .12em; margin-bottom: .6em; }
+        .reveal ul, .reveal ol { margin-left: 1em; }
+        .reveal li { margin-bottom: .4em; }
+
+        /* Diapositive de titre */
+        .reveal .title-slide h1,
+        .reveal .title-slide .subtitle,
+        .reveal .title-slide .author,
+        .reveal .title-slide .date { color: #fff !important; }
+        .reveal .title-slide h1 { font-size: 1.8em; }
+        .reveal .title-slide .subtitle { font-size: .75em; opacity: .93; }
+
+        /* Logo et pied de page */
+        .reveal .slide-logo { background: #fff; padding: 4px 8px; border-radius: 6px; max-height: 46px !important; }
+        .reveal .footer { font-size: .45em; color: #64748b; }
+
+        /* Code */
+        .reveal pre { width: 100%; box-shadow: none; font-size: .5em; margin: .4em 0; }
+        .reveal pre code { max-height: 560px; padding: 14px 18px; border-radius: 8px; }
+        .reveal code { font-size: .85em; }
+
+        /* Cartes */
+        .cartes { display: flex; gap: 24px; justify-content: center; align-items: stretch; margin-top: .6em; }
+        .carte { flex: 1; text-align: left; font-size: .75em; line-height: 1.35; background: #f8fafc;
+                 border-top: 6px solid #009EE0; border-radius: 10px; padding: 14px 20px 16px; }
+        .carte h3 { margin: 0 0 .35em; font-size: 1.15em; }
+        .carte.vert { border-top-color: #97BE0D; }
+        .carte.marine { border-top-color: #435481; }
+
+        /* Divers */
+        .gros-chiffre { font-family: "Lora", Georgia, serif; font-size: 2.6em; color: #009EE0; line-height: 1.05; }
+        .legende { font-size: .6em; color: #64748b; }
+        .reveal table { font-size: .7em; border-collapse: collapse; margin: 0 auto; }
+        .reveal table th { background: #435481; color: #fff; padding: .4em .9em; }
+        .reveal table td { padding: .4em .9em; border-bottom: 1px solid #e2e8f0; text-align: left; }
+        .callout { font-size: .8em; }
+        </style>
+---
+
+## Vue d'ensemble : de la donnée au site
+
+```{mermaid}
+flowchart LR
+  A["Données brutes<br>R, QGIS"] --> B["layers/<br>GeoJSON, JSON, PMTiles"]
+  Y["_quarto.yml<br>menus, thème, resources"] --> C
+  B --> C["Pages .qmd<br>une par indicateur"]
+  C -->|"quarto render"| D["_site/<br>HTML + JS + données"]
+  D --> E["GitHub Pages"]
+```
+
+::: {.legende}
+Quarto assemble des pages écrites à la main, une configuration commune et des données préparées en amont.
+:::
+
+::: {.notes}
+Fil rouge de l'exposé : chaque brique du schéma est détaillée dans les diapos suivantes.
+:::
+
+## L'arborescence du projet {.smaller}
+
+```
+Observatoire/
+├── _quarto.yml            # configuration du site (menus, thème, resources)
+├── styles.css
+├── accueil.qmd, mieux_comprendre.qmd, login.qmd
+├── debordement/           # 31 pages d'indicateurs
+├── ruissellement/         # 13 pages d'indicateurs
+├── layers/                # GeoJSON, JSON, PMTiles (données de la carte)
+├── tableaux/              # tableaux HTML générés par R
+├── js/                    # MapLibre, PMTiles, geocoder...
+├── assets/inject-script.html
+├── Images/                # logos, icônes, photos
+└── _tableau.R             # fonction creer_tableau()
+```
+
+::: {.legende}
+Nombre de pages d'après le menu de `_quarto.yml`.
+:::
+
+## `_quarto.yml` : le chef d'orchestre
+
+```yaml
+project:
+  type: website
+  resources:
+    - layers/*.json
+    - layers/*.pmtiles.gz
+    - tableaux/**
+    - js/*.js
+website:
+  navbar:
+    right:
+      - text: "Population"
+        menu:
+        - href: debordement/batiments_habitation.qmd
+          text: Bâtiments d'habitation
+format:
+  html:
+    theme: flatly
+    css: styles.css
+    include-in-header: assets/inject-script.html
+```
+
+::: {.notes}
+Extrait simplifié. Le fichier complet déclare aussi les images, le pied de page, la table des matières à droite, etc.
+:::
+
+## Un seul menu pour 44 pages
+
+::: {.cartes}
+
+::: {.carte}
+### Débordement
+31 pages, réparties en 6 menus : Population, Urbanisation, Économie, Infrastructures, Agriculture, Environnement
+:::
+
+::: {.carte .vert}
+### Ruissellement
+13 pages, en 2 menus : Population et Facteurs de ruissellement
+:::
+
+::: {.carte .marine}
+### Le principe
+Chaque entrée du menu pointe vers un `.qmd` : ajouter un indicateur = créer la page + ajouter 3 lignes dans le YAML
+:::
+
+:::
+
+## `resources` : déclarer ce que le JavaScript va chercher
+
+::: {.columns}
+
+::: {.column width="55%"}
+- Quarto copie dans `_site/` ce qu'il **voit** dans les pages
+- Les fichiers chargés par `fetch()` ou par MapLibre **ne sont pas détectés**
+- Il faut donc les lister : au niveau du projet, ou dans l'en-tête de chaque page
+:::
+
+::: {.column width="45%"}
+```yaml
+resources:
+  - layers/data_s31h_logt_inond_zx_q100.json
+  - layers/valeurs_s31h.json
+  - layers/batiments_perim_papi.pmtiles.gz
+  - tableaux/*.html
+```
+:::
+
+:::
+
+::: {.notes}
+Oubli classique : tout marche en local, puis le fichier manque une fois le site publié.
+:::
+
+## Anatomie d'une page d'indicateur
+
+Exemple : `debordement/batiments_habitation.qmd` (environ 3 450 lignes)
+
+| Bloc | Type | Rôle | Lignes |
+|:--|:--|:--|:--|
+| En-tête YAML | YAML | Mise en page, `resources`, scripts et CSS de la page | 1 à 718 |
+| Données | `{ojs}` | Charger et fusionner GeoJSON et valeurs | 721 à 741 |
+| Configuration graphique | `{=html}` | Variables globales, graphique Plotly | 749 à 1038 |
+| Carte | `{ojs}` | MapLibre, couches, légende, popups | 1046 à 3277 |
+| Fiches | callouts | Description, calcul, vigilance, sources | 3285 à 3374 |
+| Tableau | `{r}` | Appel à `creer_tableau()` | 3382 à 3457 |
+
+## L'en-tête de la page
+
+```yaml
+---
+title: "Bâtiments d'habitation en zone inondable"
+format:
+  html:
+    page-layout: custom      # pleine page, sans marges ni sommaire
+    sidebar-width: 0px
+resources:
+  - layers/data_s31h_logt_inond_zx_q100.json
+  - layers/batiments_perim_papi.pmtiles.gz
+include-in-header:
+  text: |
+    <script> ...chargement des bibliothèques... </script>
+    <style> ...CSS propre à la page... </style>
+---
+```
+
+::: {.notes}
+`include-in-header` injecte du HTML dans le `<head>` : c'est ici que sont chargés MapLibre, PMTiles et le geocoder.
+:::
+
+## Charger les bibliothèques, quel que soit le dossier
+
+Les pages sont dans `debordement/` ou `ruissellement/` : les chemins changent.
+
+```javascript
+var p = location.pathname;
+var base = (p.indexOf("/debordement/") !== -1 ||
+            p.indexOf("/ruissellement/") !== -1) ? "../" : "";
+window.SITE_BASE = base;
+
+js("js/pmtiles.js");
+js("js/maplibre.js");
+css("js/maplibre.css");
+js("js/photon-geocoder-autocomplete.min.js");
+```
+
+::: {.legende}
+`js()` et `css()` écrivent les balises `<script>` et `<link>` avec le bon préfixe.
+:::
+
+## Quatre types de blocs dans une même page
+
+| Bloc | Exécuté | Où | Sert à |
+|:--|:--|:--|:--|
+| `{r}` | au rendu | machine de build | Produire des fichiers (tableaux) |
+| `{ojs}` | à l'ouverture | navigateur | Données et carte, avec dépendances entre cellules |
+| `{=html}` | jamais | recopié tel quel | Scripts, variables globales, CSS |
+| `::: {.callout-...}` | au rendu | Markdown vers HTML | Fiches d'information |
+
+::: {.notes}
+Idée clé : le rendu Quarto prépare la page, le navigateur fait vivre la carte. Les deux mondes se parlent par des fichiers (`layers/`, `tableaux/`) et par des variables globales (`window.*`).
+:::
+
+## Chunk OJS n°1 : préparer les données
+
+```{{ojs}}
+//| echo: false
+//| output: false
+indicateursGeojson = {
+  const gj = await FileAttachment("layers/indicateurs_debce.geojson").json();
+  const r = await fetch("layers/valeurs_s31h.json");
+  const vals = await r.json();
+  gj.features.forEach(f => Object.assign(f.properties, vals[f.properties.insee_com]));
+  gj.features.forEach((f, i) => { f.id = i + 1; });
+  return gj;
+}
+```
+
+::: {.legende}
+Extrait simplifié. Les valeurs de l'indicateur sont rattachées à chaque commune par son code INSEE.
+:::
+
+## Chunk OJS n°2 : la carte
+
+```{{ojs}}
+//| echo: false
+//| padding: 0px
+//| fill: true
+map = {
+  const container = html`<div class="map-container" id="map"></div>`;
+  yield container;                       // la div existe avant MapLibre
+
+  const protocol = new pmtiles.Protocol();
+  maplibregl.addProtocol('pmtiles', (req) => /* ... */);
+
+  const map = new maplibregl.Map({ container: 'map', /* ... */ });
+  map.on('load', () => {
+    map.addSource(/* PMTiles, GeoJSON */);
+    map.addLayer({ id: 'indicateurs31hLayer', /* ... */ });
+  });
+}
+```
+
+::: {.notes}
+Ce chunk fait environ 2 200 lignes : fonds de carte, couches, légende, popups, recherche d'adresse et de parcelle, vue 3D.
+:::
+
+## Une configuration par aléa
+
+```javascript
+const CONFIG_MODES = {
+  debordement: {
+    champ: 's31h_logt_inond_zx_q100',
+    indicateursUrl: 'layers/indicateurs_debce.geojson',
+    seuilsCouleur: [40, 110, 200, 390],
+    tableauUrl: 'tableaux/debordement_s31h.html',
+    graphique: { url: 'layers/data_s31h_logt_inond_zx_q100.json', options: { /* ... */ } }
+  },
+  ruissellement: { /* mêmes clés, autres fichiers et seuils */ }
+};
+let cfgCourante = CONFIG_MODES[modeCourant];
+```
+
+::: {.legende}
+Un interrupteur du site change `cfgCourante` : carte, graphique et tableau suivent.
+:::
+
+## Faire communiquer les blocs : les variables `window.*`
+
+```javascript
+// Bloc {=html}, exécuté tôt : valeurs par défaut et "boîte aux lettres"
+window.TABLEAU_URL = "tableaux/debordement_s31h.html";
+window.basculerAleaCarte = function (m) { window._modeAleaEnAttente = m; };
+
+// Bloc {ojs} de la carte, quand tout est prêt : la vraie fonction
+window.basculerAleaCarte = async function (nouveauMode) {
+  cfgCourante = CONFIG_MODES[nouveauMode];
+  window.TABLEAU_URL = cfgCourante.tableauUrl;
+  window.GRAPHIQUE   = cfgCourante.graphique;
+  /* recolorer la carte, recharger graphique et tableau */
+};
+```
+
+::: {.notes}
+Les blocs HTML s'exécutent tout de suite, les cellules OJS plus tard. Tant que la carte n'est pas prête, la demande de bascule est mise en attente dans `_modeAleaEnAttente`.
+:::
+
+## Le graphique : Plotly et les valeurs masquées
+
+```javascript
+function lireValeur(brut) {          // retourne { type, val }
+  // 'na'      : non concerné
+  // 'zero'    : aucun
+  // 'moins20' : secret statistique ("< 20", "-20", ...)
+  // 'num'     : valeur exacte
+}
+
+function graphiqueBarres(conteneur, data, opts = {}) {
+  const o = { champValeur: 's31h_logt_inond_zx_q100', unite: 'bâtiments',
+              classes: [ { label: '1 à 39', max: 39, couleur: '#fde6c4' }, /* ... */ ],
+              ...opts };
+  /* trier, filtrer par seuil, puis : */
+  Plotly.react(plotDiv, [trace], layout);
+}
+```
+
+::: {.legende}
+`window.GRAPHIQUE` fournit l'URL des données et les options à cette fonction.
+:::
+
+## Les fiches d'information : callouts Quarto + JavaScript
+
+```markdown
+::: {.callout-warning .info_indicateur .ind-calcul title="Modalité de calcul" collapse="true"}
+L'indicateur consiste à compter les bâtiments d'habitation qui sont dans la zone d'inondation.
+:::
+```
+
+```javascript
+function corps(selecteur) {
+  const el = document.querySelector(selecteur);      // ex. ".callout.ind-calcul"
+  const noeud = el && (el.querySelector(".callout-body") || el);
+  return noeud ? noeud.innerHTML : "";
+}
+```
+
+::: {.legende}
+Les callouts sont cachés (`#hidden-content`) : le bouton « Fiche » les lit et les affiche dans un `<dialog>`.
+:::
+
+## Le tableau : un chunk R
+
+```{{r}}
+source("_tableau.R")
+
+creer_tableau(
+  champ   = "s31h_logt_inond_zx_q100",
+  libelle = "Nombre de bâtiments d'habitation en zone inondable",
+  fichier = "debordement_s31h.html",
+  unite   = "nombre"
+)
+```
+
+- Exécuté **à chaque rendu** de la page, sur la machine qui construit le site
+- Le fichier produit est repris dans la page via `window.TABLEAU_URL`
+
+## La préparation des données, en amont
+
+```{mermaid}
+flowchart LR
+  A["GeoJSON communes<br>indicateurs_debce"] --> B["R : sf, dplyr, jsonlite"]
+  L["Dossier des logos"] --> B
+  B --> C["GeoJSON enrichi<br>logos par commune"]
+  B --> D["JSON léger<br>pour le graphique"]
+  C --> E["Carte"]
+  D --> F["Graphique"]
+```
+
+```r
+indicateurs <- st_read("layers/indicateurs_debce.geojson", quiet = TRUE) %>%
+  st_drop_geometry() %>% select(nom, s31h_logt_inond_zx_q100) %>%
+  mutate(s31h_logt_inond_zx_q100 = replace_na(s31h_logt_inond_zx_q100, 0))
+write_json(indicateurs, "layers/data_s31h_logt_inond_zx_q100.json",
+           auto_unbox = TRUE, na = "null")
+```
+
+::: {.legende}
+Dans la page, ce bloc est commenté : il se lance à la main quand les données changent.
+:::
+
+## Ce qui se passe à `quarto render`
+
+::: {.cartes}
+
+::: {.carte}
+### 1. Configuration
+Lecture de `_quarto.yml` : menus, thème, `resources`
+:::
+
+::: {.carte .vert}
+### 2. Chaque page
+`{r}` exécuté par R, `{ojs}` converti en JavaScript, callouts convertis en HTML
+:::
+
+::: {.carte .marine}
+### 3. Copie
+Fichiers de `resources`, `js/`, `layers/`, `tableaux/` copiés dans `_site/`
+:::
+
+::: {.carte}
+### 4. Publication
+Le dossier `_site/` est servi par GitHub Pages
+:::
+
+:::
+
+## Pièges rencontrés
+
+- **Chemins relatifs** : `../layers/...` dans les sous-dossiers, d'où `SITE_BASE`
+- **Fichiers non copiés** : tout ce qui est chargé par JavaScript doit figurer dans `resources`
+- **Ordre d'exécution** : blocs HTML immédiats, cellules OJS asynchrones, d'où la « boîte aux lettres » `_modeAleaEnAttente`
+- **`document.write`** : simple pour charger les scripts, mais bloquant et déconseillé
+- **Pages très longues** : environ 3 450 lignes, dont 2 200 pour la seule carte
+
+## Pistes d'amélioration
+
+::: {.cartes}
+
+::: {.carte}
+### Sortir le JavaScript
+Déplacer le code de la carte dans `js/carte.js`, partagé par toutes les pages
+:::
+
+::: {.carte .vert}
+### Factoriser avec `include`
+`{{< include _fiches.qmd >}}` pour les callouts communs à toutes les pages
+:::
+
+::: {.carte .marine}
+### Paramétrer par page
+Une petite configuration par indicateur (champ, seuils, fichiers) et un code commun
+:::
+
+:::
+
+## Merci
+
+::: {.columns}
+
+::: {.column width="60%"}
+**Le site**
+
+[mvince11.github.io/Observatoire-eptb-](https://mvince11.github.io/Observatoire-eptb-/)
+
+**Contact**
+
+contact@eptb-vienne.fr
+:::
+
+::: {.column width="40%"}
+<span class="gros-chiffre">Questions ?</span>
+:::
+
+:::
+
+## Annexe : commandes et outils {.smaller}
+
+| Commande ou outil | Usage |
+|:--|:--|
+| `quarto preview` | Aperçu local avec rechargement automatique |
+| `quarto render` | Construire tout le site dans `_site/` |
+| `quarto render page.qmd` | Reconstruire une seule page |
+| `quarto publish gh-pages` | Publier sur GitHub Pages |
+| **R** (`sf`, `dplyr`, `jsonlite`, `tidyr`) | Préparer les données, produire les tableaux |
+| **MapLibre**, **PMTiles** | Carte interactive et données vectorielles allégées |
+| **Plotly** | Graphiques en barres |
+| **Observable JS** | Cellules réactives dans les pages Quarto |

@@ -1,10 +1,12 @@
 ---
-title: "Un observatoire en ligne pour comprendre les inondations"
-subtitle: "Comment nous avons construit le site de l'Observatoire de la vulnérabilité aux inondations Vienne - Clain"
+title: "Construire l'Observatoire avec Quarto"
+subtitle: "Architecture du site, pages d'indicateurs, chunks et code"
 author: "[Votre nom]"
 date: today
 date-format: "D MMMM YYYY"
 lang: fr
+execute:
+  echo: false
 format:
   revealjs:
     theme: simple
@@ -18,7 +20,13 @@ format:
     transition-speed: fast
     controls: true
     progress: true
-    hash: true
+    # --- Anti-boucle ---
+    hash: false
+    history: false
+    loop: false
+    auto-slide: 0
+    preview-links: false
+    embed-resources: true
     title-slide-attributes:
       data-background-gradient: "linear-gradient(135deg, #435481 0%, #009EE0 100%)"
     include-in-header:
@@ -28,9 +36,9 @@ format:
 
         .reveal { font-size: 34px; color: #1e293b; }
         .reveal h1, .reveal h2, .reveal h3 { font-family: "Lora", Georgia, serif; color: #435481; text-transform: none; }
-        .reveal h2 { display: inline-block; border-bottom: 3px solid #009EE0; padding-bottom: .12em; margin-bottom: .7em; }
+        .reveal h2 { display: inline-block; border-bottom: 3px solid #009EE0; padding-bottom: .12em; margin-bottom: .6em; }
         .reveal ul, .reveal ol { margin-left: 1em; }
-        .reveal li { margin-bottom: .45em; }
+        .reveal li { margin-bottom: .4em; }
 
         /* Diapositive de titre */
         .reveal .title-slide h1,
@@ -44,308 +52,437 @@ format:
         .reveal .slide-logo { background: #fff; padding: 4px 8px; border-radius: 6px; max-height: 46px !important; }
         .reveal .footer { font-size: .45em; color: #64748b; }
 
+        /* Code */
+        .reveal pre { width: 100%; box-shadow: none; font-size: .5em; margin: .4em 0; }
+        .reveal pre code { max-height: 560px; padding: 14px 18px; border-radius: 8px; }
+        .reveal code { font-size: .85em; }
+
         /* Cartes */
         .cartes { display: flex; gap: 24px; justify-content: center; align-items: stretch; margin-top: .6em; }
-        .carte { flex: 1; text-align: left; font-size: .8em; line-height: 1.35; background: #f8fafc;
+        .carte { flex: 1; text-align: left; font-size: .75em; line-height: 1.35; background: #f8fafc;
                  border-top: 6px solid #009EE0; border-radius: 10px; padding: 14px 20px 16px; }
         .carte h3 { margin: 0 0 .35em; font-size: 1.15em; }
         .carte.vert { border-top-color: #97BE0D; }
         .carte.marine { border-top-color: #435481; }
 
-        /* Chiffres et pastilles */
+        /* Divers */
         .gros-chiffre { font-family: "Lora", Georgia, serif; font-size: 2.6em; color: #009EE0; line-height: 1.05; }
         .legende { font-size: .6em; color: #64748b; }
-        .pastille { display: inline-block; padding: .2em .9em; margin: 0 .3em .3em 0; border-radius: 999px; color: #fff; font-weight: 600; font-size: .8em; }
-        .reveal table { font-size: .75em; border-collapse: collapse; margin: 0 auto; }
+        .reveal table { font-size: .7em; border-collapse: collapse; margin: 0 auto; }
         .reveal table th { background: #435481; color: #fff; padding: .4em .9em; }
-        .reveal table td { padding: .45em .9em; border-bottom: 1px solid #e2e8f0; text-align: left; }
+        .reveal table td { padding: .4em .9em; border-bottom: 1px solid #e2e8f0; text-align: left; }
         .callout { font-size: .8em; }
         </style>
 ---
 
-## Pourquoi un observatoire ?
+## Vue d'ensemble : de la donnée au site
+
+```{mermaid}
+flowchart LR
+  A["Données brutes<br>R, QGIS"] --> B["layers/<br>GeoJSON, JSON, PMTiles"]
+  Y["_quarto.yml<br>menus, thème, resources"] --> C
+  B --> C["Pages .qmd<br>une par indicateur"]
+  C -->|"quarto render"| D["_site/<br>HTML + JS + données"]
+  D --> E["GitHub Pages"]
+```
+
+::: {.legende}
+Quarto assemble des pages écrites à la main, une configuration commune et des données préparées en amont.
+:::
+
+::: {.notes}
+Fil rouge de l'exposé : chaque brique du schéma est détaillée dans les diapos suivantes.
+:::
+
+## L'arborescence du projet {.smaller}
+
+```
+Observatoire/
+├── _quarto.yml            # configuration du site (menus, thème, resources)
+├── styles.css
+├── accueil.qmd, mieux_comprendre.qmd, login.qmd
+├── debordement/           # 31 pages d'indicateurs
+├── ruissellement/         # 13 pages d'indicateurs
+├── layers/                # GeoJSON, JSON, PMTiles (données de la carte)
+├── tableaux/              # tableaux HTML générés par R
+├── js/                    # MapLibre, PMTiles, geocoder...
+├── assets/inject-script.html
+├── Images/                # logos, icônes, photos
+└── _tableau.R             # fonction creer_tableau()
+```
+
+::: {.legende}
+Nombre de pages d'après le menu de `_quarto.yml`.
+:::
+
+## `_quarto.yml` : le chef d'orchestre
+
+```yaml
+project:
+  type: website
+  resources:
+    - layers/*.json
+    - layers/*.pmtiles.gz
+    - tableaux/**
+    - js/*.js
+website:
+  navbar:
+    right:
+      - text: "Population"
+        menu:
+        - href: debordement/batiments_habitation.qmd
+          text: Bâtiments d'habitation
+format:
+  html:
+    theme: flatly
+    css: styles.css
+    include-in-header: assets/inject-script.html
+```
+
+::: {.notes}
+Extrait simplifié. Le fichier complet déclare aussi les images, le pied de page, la table des matières à droite, etc.
+:::
+
+## Un seul menu pour 44 pages
+
+::: {.cartes}
+
+::: {.carte}
+### Débordement
+31 pages, réparties en 6 menus : Population, Urbanisation, Économie, Infrastructures, Agriculture, Environnement
+:::
+
+::: {.carte .vert}
+### Ruissellement
+13 pages, en 2 menus : Population et Facteurs de ruissellement
+:::
+
+::: {.carte .marine}
+### Le principe
+Chaque entrée du menu pointe vers un `.qmd` : ajouter un indicateur = créer la page + ajouter 3 lignes dans le YAML
+:::
+
+:::
+
+## `resources` : déclarer ce que le JavaScript va chercher
 
 ::: {.columns}
 
 ::: {.column width="55%"}
-- L'inondation est le **premier risque naturel** en France
-- Elle menace des vies, des logements, des emplois
-- Les bassins de la Vienne et du Clain ont connu des crues par le passé
-- Objectif : **« mieux savoir pour mieux agir »**
+- Quarto copie dans `_site/` ce qu'il **voit** dans les pages
+- Les fichiers chargés par `fetch()` ou par MapLibre **ne sont pas détectés**
+- Il faut donc les lister : au niveau du projet, ou dans l'en-tête de chaque page
 :::
 
 ::: {.column width="45%"}
-![Crue à Poitiers](Images/crue_poitiers.jpg){width=100%}
-
-![Crue à Châtellerault](Images/crue_chatellerault.jpg){width=100%}
+```yaml
+resources:
+  - layers/data_s31h_logt_inond_zx_q100.json
+  - layers/valeurs_s31h.json
+  - layers/batiments_perim_papi.pmtiles.gz
+  - tableaux/*.html
+```
 :::
 
 :::
 
 ::: {.notes}
-Rappeler que le territoire a été relativement épargné ces dernières années, mais que les événements récents sur des territoires voisins incitent à rester vigilant.
+Oubli classique : tout marche en local, puis le fichier manque une fois le site publié.
 :::
 
-## La vulnérabilité, c'est quoi ?
+## Anatomie d'une page d'indicateur
 
-Ce qui peut être touché par une inondation, et à quel point.
+Exemple : `debordement/batiments_habitation.qmd` (environ 3 450 lignes)
 
-::: {.cartes}
+| Bloc | Type | Rôle | Lignes |
+|:--|:--|:--|:--|
+| En-tête YAML | YAML | Mise en page, `resources`, scripts et CSS de la page | 1 à 718 |
+| Données | `{ojs}` | Charger et fusionner GeoJSON et valeurs | 721 à 741 |
+| Configuration graphique | `{=html}` | Variables globales, graphique Plotly | 749 à 1038 |
+| Carte | `{ojs}` | MapLibre, couches, légende, popups | 1046 à 3277 |
+| Fiches | callouts | Description, calcul, vigilance, sources | 3285 à 3374 |
+| Tableau | `{r}` | Appel à `creer_tableau()` | 3382 à 3457 |
 
-::: {.carte}
-### Les personnes
-Habitants, personnes âgées, ménages modestes, établissements accueillant du public
-:::
+## L'en-tête de la page
 
-::: {.carte .vert}
-### Les biens
-Logements, bâtiments, routes, réseaux, patrimoine
-:::
-
-::: {.carte .marine}
-### Les activités
-Entreprises, emplois, agriculture, services utiles en cas de crise
-:::
-
-:::
-
-## Une « crue centennale », c'est quoi ?
-
-::: {.columns}
-
-::: {.column width="40%"}
-<span class="gros-chiffre">1 sur 100</span>
-
-chance de se produire **chaque année**
-:::
-
-::: {.column width="60%"}
-- Ce n'est **pas** « une crue tous les cent ans »
-- Elle peut survenir deux années de suite
-- Sur 30 ans, la chance d'en connaître au moins une est d'**environ 1 sur 4**
-- Tous les indicateurs de l'observatoire s'appuient sur cette crue de référence
-:::
-
-:::
+```yaml
+---
+title: "Bâtiments d'habitation en zone inondable"
+format:
+  html:
+    page-layout: custom      # pleine page, sans marges ni sommaire
+    sidebar-width: 0px
+resources:
+  - layers/data_s31h_logt_inond_zx_q100.json
+  - layers/batiments_perim_papi.pmtiles.gz
+include-in-header:
+  text: |
+    <script> ...chargement des bibliothèques... </script>
+    <style> ...CSS propre à la page... </style>
+---
+```
 
 ::: {.notes}
-Calcul : 1 - (0,99 à la puissance 30), soit environ 26 %. C'est une comparaison utile pour un public qui pense que la crue centennale ne se produit qu'une fois par siècle.
+`include-in-header` injecte du HTML dans le `<head>` : c'est ici que sont chargés MapLibre, PMTiles et le geocoder.
 :::
 
-## Le projet en une phrase
+## Charger les bibliothèques, quel que soit le dossier
 
-::: {.callout-note appearance="simple"}
-Un site **gratuit et ouvert à tous** qui montre, sur une carte et en chiffres, qui et quoi est exposé aux inondations, commune par commune.
-:::
+Les pages sont dans `debordement/` ou `ruissellement/` : les chemins changent.
 
-::: {.incremental}
-- Réalisé par l'EPTB de la Vienne et le CEREMA
-- Avec l'appui de collectivités et de services de l'État
-- Financé dans le cadre d'un programme de prévention des inondations
-:::
+```javascript
+var p = location.pathname;
+var base = (p.indexOf("/debordement/") !== -1 ||
+            p.indexOf("/ruissellement/") !== -1) ? "../" : "";
+window.SITE_BASE = base;
 
-## Ce que l'on peut faire sur le site
-
-::: {.cartes}
-
-::: {.carte}
-### Explorer la carte
-Se déplacer, zoomer, passer en vue 3D, changer de fond de plan
-:::
-
-::: {.carte .vert}
-### Chercher un lieu
-Saisir une adresse ou une parcelle pour voir si elle est concernée
-:::
-
-::: {.carte .marine}
-### Lire les chiffres
-Consulter un tableau et un graphique pour chaque indicateur
-:::
-
-:::
-
-<!-- Capture d'écran possible : Images/capture_carte.png -->
-
-## Les indicateurs
-
-Des mesures simples, calculées selon **une méthode nationale**.
-
-::: {.columns}
-
-::: {.column width="50%"}
-**Exemples**
-
-- Nombre de personnes en zone fortement inondable
-- Nombre de logements en zone inondable
-- Communes disposant d'un plan communal de sauvegarde à jour
-:::
-
-::: {.column width="50%"}
-**Six thèmes**
-
-- Population
-- Urbanisation
-- Économie
-- Infrastructures
-- Agriculture
-- Environnement
-:::
-
-:::
-
-## D'où viennent les données ?
-
-```{mermaid}
-flowchart LR
-  A["Données publiques<br>IGN, INSEE, CEREMA"] --> B["Indicateurs calculés<br>selon une méthode nationale"]
-  B --> C["Cartes, tableaux<br>et graphiques"]
-  C --> D["Un site web<br>ouvert à tous"]
+js("js/pmtiles.js");
+js("js/maplibre.js");
+css("js/maplibre.css");
+js("js/photon-geocoder-autocomplete.min.js");
 ```
 
 ::: {.legende}
-BD TOPO (IGN), Fichiers fonciers (CEREMA), GeoSIREN (INSEE)
+`js()` et `css()` écrivent les balises `<script>` et `<link>` avec le bon préfixe.
 :::
 
-## Comment le site est construit
+## Quatre types de blocs dans une même page
 
-**Quarto** : un outil qui transforme des fichiers texte et des données en site web.
-
-::: {.incremental}
-- On écrit les pages une fois, le site se **reconstruit automatiquement**
-- Pas de serveur à entretenir : le site est publié gratuitement
-- Quand les données changent, on relance la fabrication et tout est à jour
-:::
+| Bloc | Exécuté | Où | Sert à |
+|:--|:--|:--|:--|
+| `{r}` | au rendu | machine de build | Produire des fichiers (tableaux) |
+| `{ojs}` | à l'ouverture | navigateur | Données et carte, avec dépendances entre cellules |
+| `{=html}` | jamais | recopié tel quel | Scripts, variables globales, CSS |
+| `::: {.callout-...}` | au rendu | Markdown vers HTML | Fiches d'information |
 
 ::: {.notes}
-Image possible : une recette de cuisine. On écrit la recette une fois, on peut la refaire à l'identique à chaque nouvelle livraison de données.
+Idée clé : le rendu Quarto prépare la page, le navigateur fait vivre la carte. Les deux mondes se parlent par des fichiers (`layers/`, `tableaux/`) et par des variables globales (`window.*`).
 :::
 
-## Les quatre grandes étapes
+## Chunk OJS n°1 : préparer les données
 
-::: {.cartes}
-
-::: {.carte}
-### 1. Préparer
-Rassembler les données, les nettoyer, les convertir en cartes
-:::
-
-::: {.carte .vert}
-### 2. Écrire
-Une page pour chaque indicateur, selon un même modèle
-:::
-
-::: {.carte .marine}
-### 3. Fabriquer
-Quarto assemble les pages, les cartes et les graphiques
-:::
-
-::: {.carte}
-### 4. Publier
-Le site est mis en ligne et accessible à tous
-:::
-
-:::
-
-## Un défi : des données très volumineuses
-
-::: {.columns}
-
-::: {.column width="50%"}
-Les limites de parcelles couvrent tout le territoire.
-
-Pour que la carte reste **fluide**, il faut alléger les fichiers sans perdre l'information utile.
-:::
-
-::: {.column width="50%"}
-<span class="gros-chiffre">600 Mo</span>
-&nbsp;fichier d'origine
-
-<span class="gros-chiffre">110 Mo</span>
-&nbsp;après allègement
+````markdown
+```{ojs}
+//| echo: false
+//| output: false
+indicateursGeojson = {
+  const gj = await FileAttachment("layers/indicateurs_debce.geojson").json();
+  const r = await fetch("layers/valeurs_s31h.json");
+  const vals = await r.json();
+  gj.features.forEach(f => Object.assign(f.properties, vals[f.properties.insee_com]));
+  gj.features.forEach((f, i) => { f.id = i + 1; });
+  return gj;
+}
+```
+````
 
 ::: {.legende}
-Exemple de la couche des parcelles
-:::
-:::
-
+Extrait simplifié. Les valeurs de l'indicateur sont rattachées à chaque commune par son code INSEE.
 :::
 
-## Un défi : rendre les chiffres lisibles
+## Chunk OJS n°2 : la carte
 
-Certaines valeurs très faibles sont **masquées** pour protéger les données personnelles. Le site les présente de façon claire.
+````markdown
+```{ojs}
+//| echo: false
+//| padding: 0px
+//| fill: true
+map = {
+  const container = html`<div class="map-container" id="map"></div>`;
+  yield container;                       // la div existe avant MapLibre
 
-| Couleur | Signification |
-|:--|:--|
-| <span class="pastille" style="background:#d9d9d9; color:#1e293b">gris</span> | Non concerné |
-| <span class="pastille" style="background:#fff; color:#1e293b; border:1px solid #cbd5e1">blanc</span> | Aucun |
-| <span class="pastille" style="background:#ffd5d5; color:#1e293b">rose clair</span> | De 1 à 19 |
-| <span class="pastille" style="background:#ff0000">rouge</span> | 100 et plus |
+  const protocol = new pmtiles.Protocol();
+  maplibregl.addProtocol('pmtiles', (req) => /* ... */);
 
-## Deux regards sur le risque
+  const map = new maplibregl.Map({ container: 'map', /* ... */ });
+  map.on('load', () => {
+    map.addSource(/* PMTiles, GeoJSON */);
+    map.addLayer({ id: 'indicateurs31hLayer', /* ... */ });
+  });
+}
+```
+````
 
-::: {.columns}
-
-::: {.column width="50%"}
-<span class="pastille" style="background: rgb(0,158,224)">Débordement de cours d'eau</span>
-
-La rivière sort de son lit et inonde les terres voisines.
+::: {.notes}
+Ce chunk fait environ 2 200 lignes : fonds de carte, couches, légende, popups, recherche d'adresse et de parcelle, vue 3D.
 :::
 
-::: {.column width="50%"}
-<span class="pastille" style="background: rgb(151,190,13)">Ruissellement</span>
+## Une configuration par aléa
 
-La pluie ruisselle sur les sols et s'accumule dans les points bas.
+```javascript
+const CONFIG_MODES = {
+  debordement: {
+    champ: 's31h_logt_inond_zx_q100',
+    indicateursUrl: 'layers/indicateurs_debce.geojson',
+    seuilsCouleur: [40, 110, 200, 390],
+    tableauUrl: 'tableaux/debordement_s31h.html',
+    graphique: { url: 'layers/data_s31h_logt_inond_zx_q100.json', options: { /* ... */ } }
+  },
+  ruissellement: { /* mêmes clés, autres fichiers et seuils */ }
+};
+let cfgCourante = CONFIG_MODES[modeCourant];
+```
+
+::: {.legende}
+Un interrupteur du site change `cfgCourante` : carte, graphique et tableau suivent.
 :::
 
+## Faire communiquer les blocs : les variables `window.*`
+
+```javascript
+// Bloc {=html}, exécuté tôt : valeurs par défaut et "boîte aux lettres"
+window.TABLEAU_URL = "tableaux/debordement_s31h.html";
+window.basculerAleaCarte = function (m) { window._modeAleaEnAttente = m; };
+
+// Bloc {ojs} de la carte, quand tout est prêt : la vraie fonction
+window.basculerAleaCarte = async function (nouveauMode) {
+  cfgCourante = CONFIG_MODES[nouveauMode];
+  window.TABLEAU_URL = cfgCourante.tableauUrl;
+  window.GRAPHIQUE   = cfgCourante.graphique;
+  /* recolorer la carte, recharger graphique et tableau */
+};
+```
+
+::: {.notes}
+Les blocs HTML s'exécutent tout de suite, les cellules OJS plus tard. Tant que la carte n'est pas prête, la demande de bascule est mise en attente dans `_modeAleaEnAttente`.
 :::
 
-Un **interrupteur** dans la barre du site permet de passer de l'un à l'autre. Les couleurs changent pour s'y retrouver.
+## Le graphique : Plotly et les valeurs masquées
 
-## Une entrée en matière
+```javascript
+function lireValeur(brut) {          // retourne { type, val }
+  // 'na'      : non concerné
+  // 'zero'    : aucun
+  // 'moins20' : secret statistique ("< 20", "-20", ...)
+  // 'num'     : valeur exacte
+}
 
-- Une **vidéo plein écran** ouvre le site
-- Elle montre une vallée avant, pendant et après une crue
-- Un bouton permet d'entrer dans l'observatoire à tout moment
-- Elle n'est montrée **qu'une seule fois** par visite
+function graphiqueBarres(conteneur, data, opts = {}) {
+  const o = { champValeur: 's31h_logt_inond_zx_q100', unite: 'bâtiments',
+              classes: [ { label: '1 à 39', max: 39, couleur: '#fde6c4' }, /* ... */ ],
+              ...opts };
+  /* trier, filtrer par seuil, puis : */
+  Plotly.react(plotDiv, [trace], layout);
+}
+```
 
-## Ce qui a demandé du travail
+::: {.legende}
+`window.GRAPHIQUE` fournit l'URL des données et les options à cette fonction.
+:::
+
+## Les fiches d'information : callouts Quarto + JavaScript
+
+````markdown
+::: {.callout-warning .info_indicateur .ind-calcul title="Modalité de calcul" collapse="true"}
+L'indicateur consiste à compter les bâtiments d'habitation qui sont dans la zone d'inondation.
+:::
+````
+
+```javascript
+function corps(selecteur) {
+  const el = document.querySelector(selecteur);      // ex. ".callout.ind-calcul"
+  const noeud = el && (el.querySelector(".callout-body") || el);
+  return noeud ? noeud.innerHTML : "";
+}
+```
+
+::: {.legende}
+Les callouts sont cachés (`#hidden-content`) : le bouton « Fiche » les lit et les affiche dans un `<dialog>`.
+:::
+
+## Le tableau : un chunk R
+
+````markdown
+```{r}
+source("_tableau.R")
+
+creer_tableau(
+  champ   = "s31h_logt_inond_zx_q100",
+  libelle = "Nombre de bâtiments d'habitation en zone inondable",
+  fichier = "debordement_s31h.html",
+  unite   = "nombre"
+)
+```
+````
+
+- Exécuté **à chaque rendu** de la page, sur la machine qui construit le site
+- Le fichier produit est repris dans la page via `window.TABLEAU_URL`
+
+## La préparation des données, en amont
+
+```{mermaid}
+flowchart LR
+  A["GeoJSON communes<br>indicateurs_debce"] --> B["R : sf, dplyr, jsonlite"]
+  L["Dossier des logos"] --> B
+  B --> C["GeoJSON enrichi<br>logos par commune"]
+  B --> D["JSON léger<br>pour le graphique"]
+  C --> E["Carte"]
+  D --> F["Graphique"]
+```
+
+```r
+indicateurs <- st_read("layers/indicateurs_debce.geojson", quiet = TRUE) %>%
+  st_drop_geometry() %>% select(nom, s31h_logt_inond_zx_q100) %>%
+  mutate(s31h_logt_inond_zx_q100 = replace_na(s31h_logt_inond_zx_q100, 0))
+write_json(indicateurs, "layers/data_s31h_logt_inond_zx_q100.json",
+           auto_unbox = TRUE, na = "null")
+```
+
+::: {.legende}
+Dans la page, ce bloc est commenté : il se lance à la main quand les données changent.
+:::
+
+## Ce qui se passe à `quarto render`
 
 ::: {.cartes}
 
 ::: {.carte}
-### Des fichiers lourds
-Réduits pour que la carte s'affiche vite
+### 1. Configuration
+Lecture de `_quarto.yml` : menus, thème, `resources`
 :::
 
 ::: {.carte .vert}
-### Beaucoup de pages
-Organisées en deux thèmes avec un seul menu
+### 2. Chaque page
+`{r}` exécuté par R, `{ojs}` converti en JavaScript, callouts convertis en HTML
 :::
 
 ::: {.carte .marine}
-### Des écrans variés
-Un affichage adapté aux ordinateurs comme aux téléphones
+### 3. Copie
+Fichiers de `resources`, `js/`, `layers/`, `tableaux/` copiés dans `_site/`
+:::
+
+::: {.carte}
+### 4. Publication
+Le dossier `_site/` est servi par GitHub Pages
 :::
 
 :::
 
-## Et maintenant ?
+## Pièges rencontrés
 
-::: {.columns}
+- **Chemins relatifs** : `../layers/...` dans les sous-dossiers, d'où `SITE_BASE`
+- **Fichiers non copiés** : tout ce qui est chargé par JavaScript doit figurer dans `resources`
+- **Ordre d'exécution** : blocs HTML immédiats, cellules OJS asynchrones, d'où la « boîte aux lettres » `_modeAleaEnAttente`
+- **`document.write`** : simple pour charger les scripts, mais bloquant et déconseillé
+- **Pages très longues** : environ 3 450 lignes, dont 2 200 pour la seule carte
 
-::: {.column width="50%"}
-**Aujourd'hui**
+## Pistes d'amélioration
 
-Grand Poitiers et quelques communes le long de la Vienne, dont Châtellerault
+::: {.cartes}
+
+::: {.carte}
+### Sortir le JavaScript
+Déplacer le code de la carte dans `js/carte.js`, partagé par toutes les pages
 :::
 
-::: {.column width="50%"}
-**Demain**
+::: {.carte .vert}
+### Factoriser avec `include`
+`{{< include _fiches.qmd >}}` pour les callouts communs à toutes les pages
+:::
 
-- Étendre à tout le territoire Vienne - Clain
-- Compléter les pages d'indicateurs
-- Proposer des fiches à télécharger
+::: {.carte .marine}
+### Paramétrer par page
+Une petite configuration par indicateur (champ, seuils, fichiers) et un code commun
 :::
 
 :::
@@ -370,15 +507,15 @@ contact@eptb-vienne.fr
 
 :::
 
-## Annexe : les outils utilisés {.smaller}
+## Annexe : commandes et outils {.smaller}
 
-Pour les personnes qui souhaitent aller plus loin.
-
-| Outil | À quoi il sert |
+| Commande ou outil | Usage |
 |:--|:--|
-| **Quarto** | Fabriquer le site à partir de fichiers texte |
-| **R** | Préparer les données et produire les tableaux |
-| **QGIS** | Traiter les données géographiques |
-| **MapLibre** et **PMTiles** | Afficher la carte interactive |
-| **Plotly** | Dessiner les graphiques |
-| **GitHub Pages** | Héberger le site gratuitement |
+| `quarto preview` | Aperçu local avec rechargement automatique |
+| `quarto render` | Construire tout le site dans `_site/` |
+| `quarto render page.qmd` | Reconstruire une seule page |
+| `quarto publish gh-pages` | Publier sur GitHub Pages |
+| **R** (`sf`, `dplyr`, `jsonlite`, `tidyr`) | Préparer les données, produire les tableaux |
+| **MapLibre**, **PMTiles** | Carte interactive et données vectorielles allégées |
+| **Plotly** | Graphiques en barres |
+| **Observable JS** | Cellules réactives dans les pages Quarto |
